@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "controlled",
+  "version": "${version}",
+
+  "name": "Controlled",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Contrabass"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/modid/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.contrabass.controlled.ControlledInit"
+    ],
+    "client": [
+      "com.contrabass.controlled.ControlledClient"
+    ]
+  },
+  "mixins": [
+    "controlled.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.11",
+    "fabric-api": "*",
+    "minecraft": "~1.19.3",
+    "java": ">=17",
+    "fabric-key-binding-api-v1": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
