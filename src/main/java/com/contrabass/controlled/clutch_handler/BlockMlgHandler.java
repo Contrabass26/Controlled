@@ -29,32 +29,37 @@ public abstract class BlockMlgHandler implements MlgHandler {
     }
 
     public static BlockMlgHandler targetCentre() {
-        return targetPoint(0.5, 0.5);
+        return targetFixedPoint(0.5, 0.5);
     }
 
-    public static BlockMlgHandler targetPoint(double x, double z) {
+    public static BlockMlgHandler targetFixedPoint(double x, double z) {
         return new BlockMlgHandler() {
             @Override
-            protected void setKeyInputs(Vec3d playerPos) {
-                if (playerPos.x < 0) {
-                    KeyboardHandler.directions[1] = Math.abs(playerPos.x) % 1 > x;
-                    KeyboardHandler.directions[3] = Math.abs(playerPos.x) % 1 < x;
-                } else {
-                    KeyboardHandler.directions[1] = Math.abs(playerPos.x) % 1 < x;
-                    KeyboardHandler.directions[3] = Math.abs(playerPos.x) % 1 > x;
-                }
-                if (playerPos.z < 0) {
-                    KeyboardHandler.directions[0] = Math.abs(playerPos.z) % 1 < z;
-                    KeyboardHandler.directions[2] = Math.abs(playerPos.z) % 1 > z;
-                } else {
-                    KeyboardHandler.directions[0] = Math.abs(playerPos.z) % 1 > z;
-                    KeyboardHandler.directions[2] = Math.abs(playerPos.z) % 1 < z;
-                }
+            protected void adjustPos(PlayerEntity player) {
+                BlockMlgHandler.targetFixedPoint(player, x, z);
             }
         };
     }
 
-    protected abstract void setKeyInputs(Vec3d playerPos);
+    protected static void targetFixedPoint(PlayerEntity player, double x, double z) {
+        Vec3d playerPos = player.getPos();
+        if (playerPos.x < 0) {
+            KeyboardHandler.directions[1] = Math.abs(playerPos.x) % 1 > x;
+            KeyboardHandler.directions[3] = Math.abs(playerPos.x) % 1 < x;
+        } else {
+            KeyboardHandler.directions[1] = Math.abs(playerPos.x) % 1 < x;
+            KeyboardHandler.directions[3] = Math.abs(playerPos.x) % 1 > x;
+        }
+        if (playerPos.z < 0) {
+            KeyboardHandler.directions[0] = Math.abs(playerPos.z) % 1 < z;
+            KeyboardHandler.directions[2] = Math.abs(playerPos.z) % 1 > z;
+        } else {
+            KeyboardHandler.directions[0] = Math.abs(playerPos.z) % 1 > z;
+            KeyboardHandler.directions[2] = Math.abs(playerPos.z) % 1 < z;
+        }
+    }
+
+    protected abstract void adjustPos(PlayerEntity player);
 
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
@@ -71,7 +76,7 @@ public abstract class BlockMlgHandler implements MlgHandler {
                     useItem.run();
                     ControlledClient.doNextClutch = false;
                 } else {
-                    setKeyInputs(player.getPos());
+                    adjustPos(player);
                 }
             }
         } else {

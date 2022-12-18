@@ -1,9 +1,6 @@
 package com.contrabass.controlled.mixin;
 
-import com.contrabass.controlled.clutch_handler.BlockMlgHandler;
-import com.contrabass.controlled.clutch_handler.BoatMlgHandler;
-import com.contrabass.controlled.clutch_handler.MlgHandler;
-import com.contrabass.controlled.clutch_handler.WaterMlgHandler;
+import com.contrabass.controlled.clutch_handler.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +22,7 @@ public abstract class InputEventMixin {
         MLG_HANDLERS.add(new WaterMlgHandler());
         MLG_HANDLERS.add(new BoatMlgHandler());
         MLG_HANDLERS.add(BlockMlgHandler.targetCentre());
+        MLG_HANDLERS.add(new LadderMlgHandler());
     }
 
     @Shadow @Nullable public ClientPlayerEntity player;
