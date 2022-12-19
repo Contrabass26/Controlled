@@ -19,7 +19,7 @@ public class WaterMlgHandler implements MlgHandler {
                     ControlledClient.doNextClutch = false;
                     justPlaced = true;
                 } else {
-                    BlockMlgHandler.targetFixedPoint(player, 0.5, 0.5);
+                    BlockMlgHandler.targetCentre(player);
                 }
             }
         } else if (justPlaced) {

@@ -3,6 +3,8 @@ package com.contrabass.controlled.mixin;
 import com.contrabass.controlled.ControlledClient;
 import com.contrabass.controlled.clutch_handler.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +34,8 @@ public abstract class InputEventMixin {
 
     @Shadow protected abstract boolean doAttack();
 
+    @Shadow @Nullable public Screen currentScreen;
+
     @Inject(method = "handleInputEvents()V", at = @At("TAIL"))
     public void handleInputEvents(CallbackInfo callback) {
         assert player != null;
@@ -45,6 +49,15 @@ public abstract class InputEventMixin {
         if (ControlledClient.doNextLeftClick) {
             this.doAttack();
             ControlledClient.doNextLeftClick = false;
+        }
+        // Slot switching
+        if (ControlledClient.switchToSlot != null) {
+            if (!this.player.isCreative() && this.currentScreen == null) {
+                this.player.getInventory().selectedSlot = ControlledClient.switchToSlot;
+            } else {
+                CreativeInventoryScreen.onHotbarKeyPress((MinecraftClient) ((Object) this), ControlledClient.switchToSlot, false, false);
+            }
+            ControlledClient.switchToSlot = null;
         }
     }
 }

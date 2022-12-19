@@ -33,16 +33,16 @@ public abstract class BlockMlgHandler implements MlgHandler {
         return new BlockMlgHandler() {
             @Override
             protected void adjustPos(PlayerEntity player) {
-                KeyboardHandler.target = new Vector2d(
-                        MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
-                        MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
-                );
+                targetCentre(player);
             }
         };
     }
 
-    public static void targetFixedPoint(PlayerEntity player, double x, double z) {
-        // Do nothing for now
+    public static void targetCentre(PlayerEntity player) {
+        KeyboardHandler.target = new Vector2d(
+                MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
+                MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
+        );
     }
 
     protected abstract void adjustPos(PlayerEntity player);

@@ -7,24 +7,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import org.joml.Vector3f;
 
 public class LadderMlgHandler extends BlockMlgHandler {
 
-    private static void target(PlayerEntity player) {
-        Vector3f v = player.getHorizontalFacing().getUnitVector();
-        BlockMlgHandler.targetFixedPoint(player,
-                v.x == 0 ? 0.5 : normalise(v.x * 0.75),
-                v.z == 0 ? 0.5 : normalise(v.z * 0.75));
-    }
-
-    private static double normalise(double d) {
-        return d < 0 ? (d + 1) : d;
-    }
-
     @Override
     protected void adjustPos(PlayerEntity player) {
-        target(player);
+
     }
 
     public void handle(PlayerEntity player, Runnable useItem) {

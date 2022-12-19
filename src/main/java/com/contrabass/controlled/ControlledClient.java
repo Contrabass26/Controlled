@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.item.Items;
 import org.lwjgl.glfw.GLFW;
 
 public class ControlledClient implements ClientModInitializer {
@@ -13,6 +14,7 @@ public class ControlledClient implements ClientModInitializer {
     public static boolean doNextClutch = false;
     public static boolean doNextRightClick = false;
     public static boolean doNextLeftClick = false;
+    public static Integer switchToSlot = null;
 
     private static final String KEYBIND_GROUP = "category.controlled.controlled";
     private static final KeyBinding MLG_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.mlg", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, KEYBIND_GROUP));
@@ -23,8 +25,16 @@ public class ControlledClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            ClientPlayerEntity player = client.player;
+            assert player != null;
             while (MLG_KEYBINDING.wasPressed()) {
                 doNextClutch = true;
+                // Switch to best slot
+                for (int i = 0; i < 9; i++) {
+                    if (player.getInventory().getStack(i).isOf(Items.WATER_BUCKET)) {
+                        switchToSlot = i;
+                    }
+                }
             }
             if (FAST_RIGHT_CLICK_KEYBINDING.isPressed()) {
                 doNextRightClick = true;
@@ -33,8 +43,6 @@ public class ControlledClient implements ClientModInitializer {
                 doNextLeftClick = true;
             }
             if (LOCK_ROTATION_KEYBINDING.isPressed()) {
-                ClientPlayerEntity player = client.player;
-                assert player != null;
                 float yaw = player.getYaw();
                 float newYaw = Math.round(yaw / 45f) * 45f;
                 player.setYaw(newYaw);

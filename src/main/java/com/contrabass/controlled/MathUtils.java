@@ -58,7 +58,19 @@ public class MathUtils {
         return d < 0 ? Math.ceil(d) : Math.floor(d);
     }
 
+    public static double roundFromZero(double d, double interval) {
+        return roundFromZero(d / interval) * interval;
+    }
+
+    public static double roundFromZero(double d) {
+        return d < 0 ? Math.floor(d) : Math.ceil(d);
+    }
+
     public static double addPlusMinus(double a, double b) {
         return a < 0 ? (a - b) : (a + b);
+    }
+
+    public static double normalise(double d, double max) {
+        return d < 0 ? (d + max) : d;
     }
 }
