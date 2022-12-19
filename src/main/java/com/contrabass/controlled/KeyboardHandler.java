@@ -8,14 +8,14 @@ import java.util.Arrays;
 
 public class KeyboardHandler {
     
-    public static final boolean[] directions = new boolean[4];
-    public static boolean shift = false;
-    public static boolean space = false;
+    public static final Boolean[] directions = new Boolean[4];
+    public static Boolean shift = null;
+    public static Boolean space = null;
     
     private static void reset() {
-        Arrays.fill(directions, false);
-        shift = false;
-        space = false;
+        Arrays.fill(directions, null);
+        shift = null;
+        space = null;
     }
     
     public static void handle(Input keyboardInput, boolean slowDown, float factor) {
@@ -23,15 +23,19 @@ public class KeyboardHandler {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
         int offset = (int) ((player.getHorizontalFacing().asRotation() - 180) / 90f);
-        keyboardInput.pressingForward = keyboardInput.pressingForward || directions[addToOffset(offset, 0)];
-        keyboardInput.pressingRight = keyboardInput.pressingRight || directions[addToOffset(offset, 1)];
-        keyboardInput.pressingBack = keyboardInput.pressingBack || directions[addToOffset(offset, 2)];
-        keyboardInput.pressingLeft = keyboardInput.pressingLeft || directions[addToOffset(offset, 3)];
+        Boolean forward = directions[addToOffset(offset, 0)];
+        Boolean right = directions[addToOffset(offset, 1)];
+        Boolean back = directions[addToOffset(offset, 2)];
+        Boolean left = directions[addToOffset(offset, 3)];
+        keyboardInput.pressingForward = forward == null ? keyboardInput.pressingForward : forward;
+        keyboardInput.pressingRight = right == null ? keyboardInput.pressingRight : right;
+        keyboardInput.pressingBack = back == null ? keyboardInput.pressingBack : back;
+        keyboardInput.pressingLeft = left == null ? keyboardInput.pressingLeft : left;
         // Other
         keyboardInput.movementForward = getMovementMultiplier(keyboardInput.pressingForward, keyboardInput.pressingBack);
         keyboardInput.movementSideways = getMovementMultiplier(keyboardInput.pressingLeft, keyboardInput.pressingRight);
-        keyboardInput.sneaking = keyboardInput.sneaking || shift;
-        keyboardInput.jumping = keyboardInput.jumping || space;
+        keyboardInput.sneaking = shift == null ? keyboardInput.sneaking : shift;
+        keyboardInput.jumping = space == null ? keyboardInput.jumping : space;
         if (slowDown) {
             keyboardInput.movementSideways *= factor;
             keyboardInput.movementForward *= factor;

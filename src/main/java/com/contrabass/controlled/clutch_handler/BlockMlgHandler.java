@@ -41,7 +41,7 @@ public abstract class BlockMlgHandler implements MlgHandler {
         };
     }
 
-    protected static void targetFixedPoint(PlayerEntity player, double x, double z) {
+    public static void targetFixedPoint(PlayerEntity player, double x, double z) {
         Vec3d playerPos = player.getPos();
         if (playerPos.x < 0) {
             KeyboardHandler.directions[1] = Math.abs(playerPos.x) % 1 > x;

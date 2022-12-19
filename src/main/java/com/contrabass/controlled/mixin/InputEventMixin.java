@@ -1,5 +1,6 @@
 package com.contrabass.controlled.mixin;
 
+import com.contrabass.controlled.ControlledClient;
 import com.contrabass.controlled.clutch_handler.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -29,11 +30,21 @@ public abstract class InputEventMixin {
 
     @Shadow protected abstract void doItemUse();
 
+    @Shadow protected abstract boolean doAttack();
+
     @Inject(method = "handleInputEvents()V", at = @At("TAIL"))
     public void handleInputEvents(CallbackInfo callback) {
         assert player != null;
         for (MlgHandler handler : MLG_HANDLERS) {
             handler.handle(player, this::doItemUse);
+        }
+        if (ControlledClient.doNextRightClick) {
+            doItemUse();
+            ControlledClient.doNextRightClick = false;
+        }
+        if (ControlledClient.doNextLeftClick) {
+            this.doAttack();
+            ControlledClient.doNextLeftClick = false;
         }
     }
 }
