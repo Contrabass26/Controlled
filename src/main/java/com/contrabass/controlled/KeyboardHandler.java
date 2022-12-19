@@ -3,17 +3,16 @@ package com.contrabass.controlled;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
-
-import java.util.Arrays;
+import org.joml.Vector2d;
 
 public class KeyboardHandler {
     
-    public static final Boolean[] directions = new Boolean[4];
+    public static Vector2d target = null;
     public static Boolean shift = null;
     public static Boolean space = null;
     
     private static void reset() {
-        Arrays.fill(directions, null);
+        target = null;
         shift = null;
         space = null;
     }
@@ -22,15 +21,14 @@ public class KeyboardHandler {
         // WASD
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
-        int offset = (int) ((player.getHorizontalFacing().asRotation() - 180) / 90f);
-        Boolean forward = directions[addToOffset(offset, 0)];
-        Boolean right = directions[addToOffset(offset, 1)];
-        Boolean back = directions[addToOffset(offset, 2)];
-        Boolean left = directions[addToOffset(offset, 3)];
-        keyboardInput.pressingForward = forward == null ? keyboardInput.pressingForward : forward;
-        keyboardInput.pressingRight = right == null ? keyboardInput.pressingRight : right;
-        keyboardInput.pressingBack = back == null ? keyboardInput.pressingBack : back;
-        keyboardInput.pressingLeft = left == null ? keyboardInput.pressingLeft : left;
+        if (target != null) {
+            Vector2d current = MathUtils.flatten(player.getPos());
+            boolean[] keys = MathUtils.getKeysFor(current, target, player.getYaw());
+            keyboardInput.pressingForward = keys[0];
+            keyboardInput.pressingRight = keys[1];
+            keyboardInput.pressingBack = keys[2];
+            keyboardInput.pressingLeft = keys[3];
+        }
         // Other
         keyboardInput.movementForward = getMovementMultiplier(keyboardInput.pressingForward, keyboardInput.pressingBack);
         keyboardInput.movementSideways = getMovementMultiplier(keyboardInput.pressingLeft, keyboardInput.pressingRight);

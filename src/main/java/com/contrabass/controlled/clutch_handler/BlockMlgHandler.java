@@ -2,6 +2,7 @@ package com.contrabass.controlled.clutch_handler;
 
 import com.contrabass.controlled.ControlledClient;
 import com.contrabass.controlled.KeyboardHandler;
+import com.contrabass.controlled.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -10,7 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
+import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,34 +30,19 @@ public abstract class BlockMlgHandler implements MlgHandler {
     }
 
     public static BlockMlgHandler targetCentre() {
-        return targetFixedPoint(0.5, 0.5);
-    }
-
-    public static BlockMlgHandler targetFixedPoint(double x, double z) {
         return new BlockMlgHandler() {
             @Override
             protected void adjustPos(PlayerEntity player) {
-                BlockMlgHandler.targetFixedPoint(player, x, z);
+                KeyboardHandler.target = new Vector2d(
+                        MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
+                        MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
+                );
             }
         };
     }
 
     public static void targetFixedPoint(PlayerEntity player, double x, double z) {
-        Vec3d playerPos = player.getPos();
-        if (playerPos.x < 0) {
-            KeyboardHandler.directions[1] = Math.abs(playerPos.x) % 1 > x;
-            KeyboardHandler.directions[3] = Math.abs(playerPos.x) % 1 < x;
-        } else {
-            KeyboardHandler.directions[1] = Math.abs(playerPos.x) % 1 < x;
-            KeyboardHandler.directions[3] = Math.abs(playerPos.x) % 1 > x;
-        }
-        if (playerPos.z < 0) {
-            KeyboardHandler.directions[0] = Math.abs(playerPos.z) % 1 < z;
-            KeyboardHandler.directions[2] = Math.abs(playerPos.z) % 1 > z;
-        } else {
-            KeyboardHandler.directions[0] = Math.abs(playerPos.z) % 1 > z;
-            KeyboardHandler.directions[2] = Math.abs(playerPos.z) % 1 < z;
-        }
+        // Do nothing for now
     }
 
     protected abstract void adjustPos(PlayerEntity player);
