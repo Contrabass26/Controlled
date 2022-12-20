@@ -39,7 +39,8 @@ public class SlimeBlockMlgHandler extends MlgHandler {
 
     @Override
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
-        return 0;
+        if (getSlotToUse(player, hotbar) == -1) return 0;
+        return 95;
     }
 
     @Override

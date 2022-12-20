@@ -55,8 +55,7 @@ public class ControlledClient implements ClientModInitializer {
             while (MLG_KEYBINDING.wasPressed()) {
                 doNextClutch = true;
                 // Switch to best slot
-                PlayerInventory inventory = player.getInventory();
-                List<ItemStack> hotbar = IntStream.range(0, 9).mapToObj(inventory::getStack).collect(Collectors.toList());
+                List<ItemStack> hotbar = MlgHandler.getHotbar(player);
                 Pair<MlgHandler, Integer> best = new Pair<>(null, 0);
                 for (MlgHandler handler : MLG_HANDLERS) {
                     int score = handler.getScore(player.world, player, hotbar);

@@ -30,7 +30,10 @@ public class HayBlockMlgHandler extends MlgHandler {
 
     @Override
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
-        return 0;
+        if (getSlotToUse(player, hotbar) == -1) return 0;
+        float fallDistance = player.getBlockY() - getTopBlock(world, player.getBlockPos()) + player.fallDistance;
+        if (fallDistance > 103) return 0;
+        return 45;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.contrabass.controlled.clutch_handler;
 
 import com.contrabass.controlled.KeyboardHandler;
 import com.contrabass.controlled.MathUtils;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -14,6 +15,8 @@ import net.minecraft.world.World;
 import org.joml.Vector2d;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class MlgHandler {
 
@@ -60,5 +63,13 @@ public abstract class MlgHandler {
             start = start.down();
         }
         return start.getY();
+    }
+
+    protected static BlockPos getTopBlockPos(World world, BlockPos start) {
+        return new BlockPos(start.getX(), getTopBlock(world, start), start.getZ());
+    }
+
+    public static List<ItemStack> getHotbar(PlayerEntity player) {
+        return IntStream.range(0, 9).mapToObj(player.getInventory()::getStack).collect(Collectors.toList());
     }
 }

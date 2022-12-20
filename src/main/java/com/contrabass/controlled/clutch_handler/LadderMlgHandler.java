@@ -25,13 +25,14 @@ public class LadderMlgHandler extends MlgHandler {
         BlockPos playerPos = player.getBlockPos();
         Pair<Direction, Integer> best = getBestDirection(world, playerPos);
         // If there is a valid clutch target
-        if (best.getRight() != Integer.MAX_VALUE) {
+        if (best.getLeft() != null) {
             Vector2d start = new Vector2d(
                     MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
                     MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
             );
             Vector2d addition = MathUtils.flatten(best.getLeft().getOpposite().getUnitVector()).mul(0.25);
             KeyboardHandler.target = start.add(addition);
+            ControlledClient.moveToYaw = best.getLeft().asRotation();
         }
     }
 
@@ -69,7 +70,9 @@ public class LadderMlgHandler extends MlgHandler {
 
     @Override
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
-        return 0;
+        if (getSlotToUse(player, hotbar) == -1) return 0;
+        if (getBestDirection(world, player.getBlockPos()).getLeft() == null) return 0;
+        return 89;
     }
 
     @Override

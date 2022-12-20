@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -39,7 +40,11 @@ public class ScaffoldingMlgHandler extends MlgHandler {
 
     @Override
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
-        return 0;
+        if (getSlotToUse(player, hotbar) == -1) return 0;
+        BlockPos topBlockPos = getTopBlockPos(world, player.getBlockPos());
+        if (!world.getBlockState(topBlockPos).isSolidBlock(world, topBlockPos)) return 0;
+        // TODO: One block of scaffolding only breaks falls up to a certain height
+        return 90;
     }
 
     @Override
