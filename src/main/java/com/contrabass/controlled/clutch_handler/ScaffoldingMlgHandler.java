@@ -1,6 +1,7 @@
 package com.contrabass.controlled.clutch_handler;
 
 import com.contrabass.controlled.ControlledClient;
+import com.contrabass.controlled.KeyboardHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -9,24 +10,30 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class WaterMlgHandler extends MlgHandler {
+public class ScaffoldingMlgHandler extends MlgHandler {
 
-    private boolean justPlaced = false;
+    private boolean releaseShiftNext = false;
 
+    @Override
     public void handle(PlayerEntity player, Runnable useItem) {
+        if (releaseShiftNext) {
+            KeyboardHandler.shift = true;
+            releaseShiftNext = false;
+        }
         if (!player.isOnGround()) {
-            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && ControlledClient.doNextClutch) {
+            ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
+            if (stackInHand.isOf(Items.SCAFFOLDING) && ControlledClient.doNextClutch) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     ControlledClient.doNextClutch = false;
-                    justPlaced = true;
+                    releaseShiftNext = true;
                 } else {
                     targetCentre(player);
                 }
+                KeyboardHandler.shift = true;
             }
-        } else if (justPlaced) {
-            useItem.run();
-            justPlaced = false;
+        } else {
+            ControlledClient.doNextClutch = false;
         }
     }
 
@@ -37,6 +44,6 @@ public class WaterMlgHandler extends MlgHandler {
 
     @Override
     public int getSlotToUse(PlayerEntity player, List<ItemStack> hotbar) {
-        return findSlotFor(hotbar, Items.WATER_BUCKET);
+        return findSlotFor(hotbar, Items.SCAFFOLDING);
     }
 }

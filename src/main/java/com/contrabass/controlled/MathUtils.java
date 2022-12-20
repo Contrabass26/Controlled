@@ -2,6 +2,7 @@ package com.contrabass.controlled;
 
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector2d;
+import org.joml.Vector3f;
 
 // 2D Vector specification:
 // x = east (positive) or west (negative)
@@ -50,6 +51,10 @@ public class MathUtils {
         return new Vector2d(v.x, v.z);
     }
 
+    public static Vector2d flatten(Vector3f v) {
+        return new Vector2d(v.x, v.z);
+    }
+
     public static double roundToZero(double d, double interval) {
         return roundToZero(d / interval) * interval;
     }
@@ -68,6 +73,10 @@ public class MathUtils {
 
     public static double addPlusMinus(double a, double b) {
         return a < 0 ? (a - b) : (a + b);
+    }
+
+    public static Vector2d addPlusMinus(Vector2d a, Vector2d b) {
+        return new Vector2d(addPlusMinus(a.x, b.x), addPlusMinus(a.y, b.y));
     }
 
     public static double normalise(double d, double max) {

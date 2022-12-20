@@ -41,11 +41,6 @@ public class KeyboardHandler {
         reset();
     }
 
-    private static int addToOffset(int offset, int increment) {
-        int result = (offset + increment) % 4;
-        return result >= 0 ? result : Math.abs(-4 - result);
-    }
-
     private static float getMovementMultiplier(boolean positive, boolean negative) {
         if (positive == negative) {
             return 0.0F;

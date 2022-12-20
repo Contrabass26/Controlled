@@ -1,7 +1,7 @@
 package com.contrabass.controlled.mixin;
 
 import com.contrabass.controlled.ControlledClient;
-import com.contrabass.controlled.clutch_handler.*;
+import com.contrabass.controlled.clutch_handler.MlgHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -13,20 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Mixin(MinecraftClient.class)
 public abstract class InputEventMixin {
-
-    private static final Set<MlgHandler> MLG_HANDLERS;
-    static {
-        MLG_HANDLERS = new HashSet<>();
-        MLG_HANDLERS.add(new WaterMlgHandler());
-        MLG_HANDLERS.add(new BoatMlgHandler());
-        MLG_HANDLERS.add(BlockMlgHandler.targetCentre());
-        MLG_HANDLERS.add(new LadderMlgHandler());
-    }
 
     @Shadow @Nullable public ClientPlayerEntity player;
 
@@ -39,7 +27,7 @@ public abstract class InputEventMixin {
     @Inject(method = "handleInputEvents()V", at = @At("TAIL"))
     public void handleInputEvents(CallbackInfo callback) {
         assert player != null;
-        for (MlgHandler handler : MLG_HANDLERS) {
+        for (MlgHandler handler : ControlledClient.MLG_HANDLERS) {
             handler.handle(player, this::doItemUse);
         }
         if (ControlledClient.doNextRightClick) {

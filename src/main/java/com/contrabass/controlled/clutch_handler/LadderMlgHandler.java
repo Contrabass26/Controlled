@@ -1,18 +1,54 @@
 package com.contrabass.controlled.clutch_handler;
 
 import com.contrabass.controlled.ControlledClient;
+import com.contrabass.controlled.KeyboardHandler;
+import com.contrabass.controlled.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
+import org.joml.Vector2d;
 
-public class LadderMlgHandler extends BlockMlgHandler {
+import java.util.List;
 
-    @Override
-    protected void adjustPos(PlayerEntity player) {
+public class LadderMlgHandler extends MlgHandler {
 
+    private static void adjustPos(PlayerEntity player) {
+        World world = player.world;
+        // Find block to clutch on side of
+        BlockPos playerPos = player.getBlockPos();
+        Pair<Direction, Integer> best = getBestDirection(world, playerPos);
+        // If there is a valid clutch target
+        if (best.getRight() != Integer.MAX_VALUE) {
+            Vector2d start = new Vector2d(
+                    MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
+                    MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
+            );
+            Vector2d addition = MathUtils.flatten(best.getLeft().getOpposite().getUnitVector()).mul(0.25);
+            KeyboardHandler.target = start.add(addition);
+        }
+    }
+
+    private static Pair<Direction, Integer> getBestDirection(World world, BlockPos playerPos) {
+        int landingY = getTopBlock(world, playerPos);
+        Pair<Direction, Integer> best = new Pair<>(null, Integer.MAX_VALUE);
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis() == Direction.Axis.Y) continue;
+            // Find top block for this x and z
+            int topY = getTopBlock(world, playerPos.offset(direction));
+            int difference = topY - landingY;
+            if (difference < best.getRight() && difference > 0) {
+                // Better target for ladder
+                best = new Pair<>(direction, difference);
+            }
+        }
+        return best;
     }
 
     public void handle(PlayerEntity player, Runnable useItem) {
@@ -29,5 +65,15 @@ public class LadderMlgHandler extends BlockMlgHandler {
         } else {
             ControlledClient.doNextClutch = false;
         }
+    }
+
+    @Override
+    public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
+        return 0;
+    }
+
+    @Override
+    public int getSlotToUse(PlayerEntity player, List<ItemStack> hotbar) {
+        return findSlotFor(hotbar, Items.LADDER);
     }
 }

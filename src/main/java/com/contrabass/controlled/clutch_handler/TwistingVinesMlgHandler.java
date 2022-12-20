@@ -9,24 +9,22 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class WaterMlgHandler extends MlgHandler {
+public class TwistingVinesMlgHandler extends MlgHandler {
 
-    private boolean justPlaced = false;
-
+    @Override
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
-            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && ControlledClient.doNextClutch) {
+            ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
+            if (stackInHand.isOf(Items.TWISTING_VINES) && ControlledClient.doNextClutch) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     ControlledClient.doNextClutch = false;
-                    justPlaced = true;
                 } else {
                     targetCentre(player);
                 }
             }
-        } else if (justPlaced) {
-            useItem.run();
-            justPlaced = false;
+        } else {
+            ControlledClient.doNextClutch = false;
         }
     }
 
@@ -37,6 +35,6 @@ public class WaterMlgHandler extends MlgHandler {
 
     @Override
     public int getSlotToUse(PlayerEntity player, List<ItemStack> hotbar) {
-        return findSlotFor(hotbar, Items.WATER_BUCKET);
+        return findSlotFor(hotbar, Items.TWISTING_VINES);
     }
 }
