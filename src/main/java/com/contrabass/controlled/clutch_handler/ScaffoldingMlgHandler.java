@@ -1,7 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.ControlledClient;
-import com.contrabass.controlled.KeyboardHandler;
+import com.contrabass.controlled.InputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -18,23 +17,23 @@ public class ScaffoldingMlgHandler extends MlgHandler {
     @Override
     public void handle(PlayerEntity player, Runnable useItem) {
         if (releaseShiftNext) {
-            KeyboardHandler.shift = true;
+            InputHandler.shift = true;
             releaseShiftNext = false;
         }
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.SCAFFOLDING) && ControlledClient.doNextClutch) {
+            if (stackInHand.isOf(Items.SCAFFOLDING) && InputHandler.doNextClutch) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    ControlledClient.doNextClutch = false;
+                    InputHandler.doNextClutch = false;
                     releaseShiftNext = true;
                 } else {
                     targetCentre(player);
                 }
-                KeyboardHandler.shift = true;
+                InputHandler.shift = true;
             }
         } else {
-            ControlledClient.doNextClutch = false;
+            InputHandler.doNextClutch = false;
         }
     }
 

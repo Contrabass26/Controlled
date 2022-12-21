@@ -1,9 +1,7 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.ControlledClient;
-import com.contrabass.controlled.KeyboardHandler;
+import com.contrabass.controlled.InputHandler;
 import com.contrabass.controlled.MathUtils;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -49,9 +47,9 @@ public class HoneyBlockSideMlgHandler extends MlgHandler {
                         MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
                 );
                 Vector2d addition = MathUtils.flatten(direction.getUnitVector()).mul(0.7375);
-                KeyboardHandler.target = MathUtils.addPlusMinus(start, addition);
-                ControlledClient.moveToPitch = 85f;
-                ControlledClient.moveToYaw = direction.asRotation();
+                InputHandler.target = MathUtils.addPlusMinus(start, addition);
+                InputHandler.moveToPitch = 85f;
+                InputHandler.moveToYaw = direction.asRotation();
                 break;
             }
         }

@@ -1,6 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.ControlledClient;
+import com.contrabass.controlled.InputHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -30,16 +30,16 @@ public class SweetBerriesMlgHandler extends MlgHandler {
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.SWEET_BERRIES) && ControlledClient.doNextClutch) {
+            if (stackInHand.isOf(Items.SWEET_BERRIES) && InputHandler.doNextClutch) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    ControlledClient.doNextClutch = false;
+                    InputHandler.doNextClutch = false;
                 } else {
                     targetCentre(player);
                 }
             }
         } else {
-            ControlledClient.doNextClutch = false;
+            InputHandler.doNextClutch = false;
         }
     }
 

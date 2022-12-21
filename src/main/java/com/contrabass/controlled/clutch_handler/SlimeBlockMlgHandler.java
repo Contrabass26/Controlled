@@ -1,7 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.ControlledClient;
-import com.contrabass.controlled.KeyboardHandler;
+import com.contrabass.controlled.InputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,23 +16,23 @@ public class SlimeBlockMlgHandler extends MlgHandler {
     @Override
     public void handle(PlayerEntity player, Runnable useItem) {
         if (releaseSpaceNext) {
-            KeyboardHandler.space = true;
+            InputHandler.space = true;
             releaseSpaceNext = false;
         }
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.SLIME_BLOCK) && ControlledClient.doNextClutch) {
+            if (stackInHand.isOf(Items.SLIME_BLOCK) && InputHandler.doNextClutch) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    ControlledClient.doNextClutch = false;
+                    InputHandler.doNextClutch = false;
                     releaseSpaceNext = true;
                 } else {
                     targetCentre(player);
                 }
-                KeyboardHandler.space = true;
+                InputHandler.space = true;
             }
         } else {
-            ControlledClient.doNextClutch = false;
+            InputHandler.doNextClutch = false;
         }
     }
 

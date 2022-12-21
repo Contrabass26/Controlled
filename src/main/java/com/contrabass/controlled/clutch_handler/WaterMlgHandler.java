@@ -1,7 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.ControlledClient;
-import net.minecraft.block.BlockState;
+import com.contrabass.controlled.InputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -18,10 +17,10 @@ public class WaterMlgHandler extends MlgHandler {
 
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
-            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && ControlledClient.doNextClutch) {
+            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && InputHandler.doNextClutch) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    ControlledClient.doNextClutch = false;
+                    InputHandler.doNextClutch = false;
                     justPlaced = true;
                 } else {
                     targetCentre(player);

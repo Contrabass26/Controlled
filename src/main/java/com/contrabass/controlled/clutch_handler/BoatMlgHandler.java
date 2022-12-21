@@ -1,6 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.ControlledClient;
+import com.contrabass.controlled.InputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ public class BoatMlgHandler extends MlgHandler {
 
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
-            if (player.getStackInHand(player.getActiveHand()).isIn(ItemTags.BOATS) && ControlledClient.doNextClutch) {
+            if (player.getStackInHand(player.getActiveHand()).isIn(ItemTags.BOATS) && InputHandler.doNextClutch) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     stage = 1;
@@ -25,11 +25,11 @@ public class BoatMlgHandler extends MlgHandler {
             } else if (stage == 1) {
                 useItem.run();
                 stage = 0;
-                ControlledClient.doNextClutch = false;
+                InputHandler.doNextClutch = false;
             }
         } else {
             // Failed clutch
-            ControlledClient.doNextClutch = false;
+            InputHandler.doNextClutch = false;
         }
     }
 

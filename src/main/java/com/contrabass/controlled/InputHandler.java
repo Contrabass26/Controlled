@@ -1,23 +1,31 @@
 package com.contrabass.controlled;
 
+import com.contrabass.controlled.clutch_handler.MlgHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.joml.Vector2d;
 
-public class KeyboardHandler {
+public class InputHandler {
     
     public static Vector2d target = null;
     public static Boolean shift = null;
     public static Boolean space = null;
-    
+    public static boolean doNextClutch = false;
+    public static boolean doNextRightClick = false;
+    public static boolean doNextLeftClick = false;
+    public static Integer switchToSlot = null;
+    public static Float moveToYaw = null;
+    public static Float moveToPitch = null;
+
     private static void reset() {
         target = null;
         shift = null;
         space = null;
     }
     
-    public static void handle(Input keyboardInput, boolean slowDown, float factor) {
+    public static void handleKeys(Input keyboardInput, boolean slowDown, float factor) {
         // WASD
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
@@ -39,6 +47,35 @@ public class KeyboardHandler {
             keyboardInput.movementForward *= factor;
         }
         reset();
+    }
+
+    public static void handleInputEvents(Runnable itemUse, Runnable attack, PlayerEntity player, MinecraftClient client) {
+        for (MlgHandler handler : ControlledClient.MLG_HANDLERS) {
+            handler.handle(player, itemUse);
+        }
+        if (doNextRightClick) {
+            itemUse.run();
+            doNextRightClick = false;
+        }
+        if (doNextLeftClick) {
+            attack.run();
+            doNextLeftClick = false;
+        }
+        if (moveToYaw != null) {
+            player.setYaw(moveToYaw);
+            moveToYaw = null;
+        }
+        if (moveToPitch != null) {
+            player.setPitch(moveToPitch);
+            moveToPitch = null;
+        }
+        // Slot switching
+        if (switchToSlot != null) {
+            if (client.currentScreen == null) {
+                player.getInventory().selectedSlot = switchToSlot;
+            }
+            switchToSlot = null;
+        }
     }
 
     private static float getMovementMultiplier(boolean positive, boolean negative) {

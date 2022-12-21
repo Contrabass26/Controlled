@@ -1,7 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.ControlledClient;
-import com.contrabass.controlled.KeyboardHandler;
+import com.contrabass.controlled.InputHandler;
 import com.contrabass.controlled.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,8 +30,8 @@ public class LadderMlgHandler extends MlgHandler {
                     MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
             );
             Vector2d addition = MathUtils.flatten(best.getLeft().getOpposite().getUnitVector()).mul(0.25);
-            KeyboardHandler.target = start.add(addition);
-            ControlledClient.moveToYaw = best.getLeft().asRotation();
+            InputHandler.target = start.add(addition);
+            InputHandler.moveToYaw = best.getLeft().asRotation();
         }
     }
 
@@ -55,16 +54,16 @@ public class LadderMlgHandler extends MlgHandler {
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.LADDER) && MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult hitResult && ControlledClient.doNextClutch) {
+            if (stackInHand.isOf(Items.LADDER) && MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult hitResult && InputHandler.doNextClutch) {
                 if (hitResult.getType() != HitResult.Type.MISS) {
                     useItem.run();
-                    ControlledClient.doNextClutch = false;
+                    InputHandler.doNextClutch = false;
                 } else {
                     adjustPos(player);
                 }
             }
         } else {
-            ControlledClient.doNextClutch = false;
+            InputHandler.doNextClutch = false;
         }
     }
 
