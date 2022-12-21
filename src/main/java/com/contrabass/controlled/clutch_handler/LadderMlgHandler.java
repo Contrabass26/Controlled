@@ -54,16 +54,16 @@ public class LadderMlgHandler extends MlgHandler {
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.LADDER) && MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult hitResult && InputHandler.doNextClutch) {
+            if (stackInHand.isOf(Items.LADDER) && MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult hitResult && willClutchNext()) {
                 if (hitResult.getType() != HitResult.Type.MISS) {
                     useItem.run();
-                    InputHandler.doNextClutch = false;
+                    finishClutch();
                 } else {
                     adjustPos(player);
                 }
             }
         } else {
-            InputHandler.doNextClutch = false;
+            finishClutch();
         }
     }
 

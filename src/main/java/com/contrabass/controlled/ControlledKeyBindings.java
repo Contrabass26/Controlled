@@ -23,7 +23,7 @@ public class ControlledKeyBindings {
 
     public static void handleKeyBindings(PlayerEntity player) {
         while (MLG_KEYBINDING.wasPressed()) {
-            InputHandler.doNextClutch = true;
+            MlgHandler.doNextClutch();
             // Switch to best slot
             MlgHandler.switchToBestSlot(player);
         }

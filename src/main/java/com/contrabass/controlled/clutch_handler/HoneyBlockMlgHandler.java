@@ -1,6 +1,5 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.InputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,16 +14,16 @@ public class HoneyBlockMlgHandler extends MlgHandler {
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.HONEY_BLOCK) && InputHandler.doNextClutch) {
+            if (stackInHand.isOf(Items.HONEY_BLOCK) && willClutchNext()) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    InputHandler.doNextClutch = false;
+                    finishClutch();
                 } else {
                     targetCentre(player);
                 }
             }
         } else {
-            InputHandler.doNextClutch = false;
+            finishClutch();
         }
     }
 

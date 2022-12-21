@@ -22,10 +22,10 @@ public class ScaffoldingMlgHandler extends MlgHandler {
         }
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.SCAFFOLDING) && InputHandler.doNextClutch) {
+            if (stackInHand.isOf(Items.SCAFFOLDING) && willClutchNext()) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    InputHandler.doNextClutch = false;
+                    finishClutch();
                     releaseShiftNext = true;
                 } else {
                     targetCentre(player);
@@ -33,7 +33,7 @@ public class ScaffoldingMlgHandler extends MlgHandler {
                 InputHandler.shift = true;
             }
         } else {
-            InputHandler.doNextClutch = false;
+            finishClutch();
         }
     }
 

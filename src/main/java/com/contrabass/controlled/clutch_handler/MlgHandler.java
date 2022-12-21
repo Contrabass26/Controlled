@@ -21,11 +21,28 @@ import java.util.stream.IntStream;
 
 public abstract class MlgHandler {
 
+    private static boolean doNextClutch = false;
+
     public abstract void handle(PlayerEntity player, Runnable useItem);
 
     public abstract int getScore(World world, PlayerEntity player, List<ItemStack> hotbar);
 
     public abstract int getSlotToUse(PlayerEntity player, List<ItemStack> hotbar);
+
+    protected void clearCaches() {}
+
+    public static void doNextClutch() {
+        doNextClutch = true;
+    }
+
+    public static boolean willClutchNext() {
+        return doNextClutch;
+    }
+
+    protected static void finishClutch() {
+        doNextClutch = false;
+        ControlledClient.MLG_HANDLERS.forEach(MlgHandler::clearCaches);
+    }
 
     public static void switchToBestSlot(PlayerEntity player) {
         List<ItemStack> hotbar = getHotbar(player);
@@ -48,8 +65,8 @@ public abstract class MlgHandler {
         return false;
     }
 
-    protected static void targetCentre(PlayerEntity player) {
-        InputHandler.target = new Vector2d(
+    protected static Vector2d targetCentre(PlayerEntity player) {
+        return new Vector2d(
                 MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
                 MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
         );

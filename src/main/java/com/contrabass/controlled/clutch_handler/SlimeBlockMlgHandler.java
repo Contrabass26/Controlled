@@ -21,10 +21,10 @@ public class SlimeBlockMlgHandler extends MlgHandler {
         }
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.SLIME_BLOCK) && InputHandler.doNextClutch) {
+            if (stackInHand.isOf(Items.SLIME_BLOCK) && willClutchNext()) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    InputHandler.doNextClutch = false;
+                    finishClutch();
                     releaseSpaceNext = true;
                 } else {
                     targetCentre(player);
@@ -32,7 +32,7 @@ public class SlimeBlockMlgHandler extends MlgHandler {
                 InputHandler.space = true;
             }
         } else {
-            InputHandler.doNextClutch = false;
+            finishClutch();
         }
     }
 

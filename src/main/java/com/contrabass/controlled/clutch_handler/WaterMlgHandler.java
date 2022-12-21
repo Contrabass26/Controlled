@@ -14,22 +14,31 @@ import java.util.List;
 public class WaterMlgHandler extends MlgHandler {
 
     private boolean justPlaced = false;
+//    private Vector2d cachedTarget = null;
 
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
-            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && InputHandler.doNextClutch) {
+            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && MlgHandler.willClutchNext()) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    InputHandler.doNextClutch = false;
+                    MlgHandler.finishClutch();
                     justPlaced = true;
                 } else {
-                    targetCentre(player);
+                    doTargeting(player);
                 }
             }
         } else if (justPlaced) {
             useItem.run();
             justPlaced = false;
         }
+    }
+
+    private void doTargeting(PlayerEntity player) {
+//        if (cachedTarget == null) {
+//            cachedTarget = targetCentre(player);
+//        }
+//        InputHandler.target = cachedTarget;
+        InputHandler.target = targetCentre(player);
     }
 
     @Override
@@ -45,4 +54,9 @@ public class WaterMlgHandler extends MlgHandler {
     public int getSlotToUse(PlayerEntity player, List<ItemStack> hotbar) {
         return findSlotFor(hotbar, Items.WATER_BUCKET);
     }
+
+//    @Override
+//    protected void clearCaches() {
+//        cachedTarget = null;
+//    }
 }

@@ -12,7 +12,6 @@ public class InputHandler {
     public static Vector2d target = null;
     public static Boolean shift = null;
     public static Boolean space = null;
-    public static boolean doNextClutch = false;
     public static boolean doNextRightClick = false;
     public static boolean doNextLeftClick = false;
     public static Integer switchToSlot = null;
