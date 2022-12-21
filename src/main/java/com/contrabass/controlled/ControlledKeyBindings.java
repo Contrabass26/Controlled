@@ -1,6 +1,6 @@
 package com.contrabass.controlled;
 
-import com.contrabass.controlled.clutch_handler.MlgHandler;
+import com.contrabass.controlled.clutch_handler.ClutchHandler;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -23,15 +23,15 @@ public class ControlledKeyBindings {
 
     public static void handleKeyBindings(PlayerEntity player) {
         while (MLG_KEYBINDING.wasPressed()) {
-            MlgHandler.doNextClutch();
+            ClutchHandler.doNextClutch();
             // Switch to best slot
-            MlgHandler.switchToBestSlot(player);
+            ClutchHandler.switchToBestSlot(player);
         }
         if (FAST_RIGHT_CLICK_KEYBINDING.isPressed()) {
-            InputHandler.doNextRightClick = true;
+            ControlledInputHandler.doNextRightClick = true;
         }
         if (FAST_LEFT_CLICK_KEYBINDING.isPressed()) {
-            InputHandler.doNextLeftClick = true;
+            ControlledInputHandler.doNextLeftClick = true;
         }
         if (LOCK_ROTATION_KEYBINDING.isPressed()) {
             float yaw = player.getYaw();

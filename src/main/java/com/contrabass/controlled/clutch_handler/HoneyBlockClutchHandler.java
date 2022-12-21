@@ -8,13 +8,13 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class HayBlockMlgHandler extends MlgHandler {
+public class HoneyBlockClutchHandler extends ClutchHandler {
 
     @Override
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
-            if (stackInHand.isOf(Items.HAY_BLOCK) && willClutchNext()) {
+            if (stackInHand.isOf(Items.HONEY_BLOCK) && willClutchNext()) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     finishClutch();
@@ -32,11 +32,11 @@ public class HayBlockMlgHandler extends MlgHandler {
         if (getSlotToUse(player, hotbar) == -1) return 0;
         float fallDistance = player.getBlockY() - getTopBlock(world, player.getBlockPos()) + player.fallDistance;
         if (fallDistance > 103) return 0;
-        return 45;
+        return 40;
     }
 
     @Override
     public int getSlotToUse(PlayerEntity player, List<ItemStack> hotbar) {
-        return findSlotFor(hotbar, Items.HAY_BLOCK);
+        return findSlotFor(hotbar, Items.HONEY_BLOCK);
     }
 }

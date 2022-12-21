@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class TwistingVinesMlgHandler extends MlgHandler {
+public class TwistingVinesClutchHandler extends ClutchHandler {
 
     @Override
     public void handle(PlayerEntity player, Runnable useItem) {

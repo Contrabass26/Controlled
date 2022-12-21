@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class BoatMlgHandler extends MlgHandler {
+public class BoatClutchHandler extends ClutchHandler {
 
     private int stage = 0;
 

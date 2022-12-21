@@ -1,13 +1,13 @@
 package com.contrabass.controlled;
 
-import com.contrabass.controlled.clutch_handler.MlgHandler;
+import com.contrabass.controlled.clutch_handler.ClutchHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.joml.Vector2d;
 
-public class InputHandler {
+public class ControlledInputHandler {
     
     public static Vector2d target = null;
     public static Boolean shift = null;
@@ -17,6 +17,8 @@ public class InputHandler {
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
     public static Float moveToPitch = null;
+
+    private ControlledInputHandler() {}
 
     private static void reset() {
         target = null;
@@ -49,7 +51,7 @@ public class InputHandler {
     }
 
     public static void handleInputEvents(Runnable itemUse, Runnable attack, PlayerEntity player, MinecraftClient client) {
-        for (MlgHandler handler : ControlledClient.MLG_HANDLERS) {
+        for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
             handler.handle(player, itemUse);
         }
         if (doNextRightClick) {

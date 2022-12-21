@@ -1,6 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.InputHandler;
+import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +16,7 @@ import org.joml.Vector2d;
 
 import java.util.List;
 
-public class LadderMlgHandler extends MlgHandler {
+public class LadderClutchHandler extends ClutchHandler {
 
     private static void adjustPos(PlayerEntity player) {
         World world = player.world;
@@ -30,8 +30,8 @@ public class LadderMlgHandler extends MlgHandler {
                     MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
             );
             Vector2d addition = MathUtils.flatten(best.getLeft().getOpposite().getUnitVector()).mul(0.25);
-            InputHandler.target = start.add(addition);
-            InputHandler.moveToYaw = best.getLeft().asRotation();
+            ControlledInputHandler.target = start.add(addition);
+            ControlledInputHandler.moveToYaw = best.getLeft().asRotation();
         }
     }
 

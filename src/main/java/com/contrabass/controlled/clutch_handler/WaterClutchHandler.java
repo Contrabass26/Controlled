@@ -1,6 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.InputHandler;
+import com.contrabass.controlled.ControlledInputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -11,17 +11,17 @@ import net.minecraft.world.dimension.DimensionTypes;
 
 import java.util.List;
 
-public class WaterMlgHandler extends MlgHandler {
+public class WaterClutchHandler extends ClutchHandler {
 
     private boolean justPlaced = false;
 //    private Vector2d cachedTarget = null;
 
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
-            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && MlgHandler.willClutchNext()) {
+            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && ClutchHandler.willClutchNext()) {
                 if (isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    MlgHandler.finishClutch();
+                    ClutchHandler.finishClutch();
                     justPlaced = true;
                 } else {
                     doTargeting(player);
@@ -38,7 +38,7 @@ public class WaterMlgHandler extends MlgHandler {
 //            cachedTarget = targetCentre(player);
 //        }
 //        InputHandler.target = cachedTarget;
-        InputHandler.target = targetCentre(player);
+        ControlledInputHandler.target = targetCentre(player);
     }
 
     @Override

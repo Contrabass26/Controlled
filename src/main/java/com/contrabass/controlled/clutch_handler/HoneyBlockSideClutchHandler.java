@@ -1,6 +1,6 @@
 package com.contrabass.controlled.clutch_handler;
 
-import com.contrabass.controlled.InputHandler;
+import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.MathUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -12,7 +12,7 @@ import org.joml.Vector2d;
 
 import java.util.List;
 
-public class HoneyBlockSideMlgHandler extends MlgHandler {
+public class HoneyBlockSideClutchHandler extends ClutchHandler {
     
     @Override
     public void handle(PlayerEntity player, Runnable useItem) {
@@ -47,9 +47,9 @@ public class HoneyBlockSideMlgHandler extends MlgHandler {
                         MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
                 );
                 Vector2d addition = MathUtils.flatten(direction.getUnitVector()).mul(0.7375);
-                InputHandler.target = MathUtils.addPlusMinus(start, addition);
-                InputHandler.moveToPitch = 85f;
-                InputHandler.moveToYaw = direction.asRotation();
+                ControlledInputHandler.target = MathUtils.addPlusMinus(start, addition);
+                ControlledInputHandler.moveToPitch = 85f;
+                ControlledInputHandler.moveToYaw = direction.asRotation();
                 break;
             }
         }

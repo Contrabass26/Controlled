@@ -1,7 +1,7 @@
 package com.contrabass.controlled.clutch_handler;
 
 import com.contrabass.controlled.ControlledClient;
-import com.contrabass.controlled.InputHandler;
+import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class MlgHandler {
+public abstract class ClutchHandler {
 
     private static boolean doNextClutch = false;
 
@@ -41,20 +41,20 @@ public abstract class MlgHandler {
 
     protected static void finishClutch() {
         doNextClutch = false;
-        ControlledClient.MLG_HANDLERS.forEach(MlgHandler::clearCaches);
+        ControlledClient.MLG_HANDLERS.forEach(ClutchHandler::clearCaches);
     }
 
     public static void switchToBestSlot(PlayerEntity player) {
         List<ItemStack> hotbar = getHotbar(player);
-        Pair<MlgHandler, Integer> best = new Pair<>(null, 0);
-        for (MlgHandler handler : ControlledClient.MLG_HANDLERS) {
+        Pair<ClutchHandler, Integer> best = new Pair<>(null, 0);
+        for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
             int score = handler.getScore(player.world, player, hotbar);
             if (score > best.getRight()) {
                 best = new Pair<>(handler, score);
             }
         }
         if (best.getRight() != 0) {
-            InputHandler.switchToSlot = best.getLeft().getSlotToUse(player, hotbar);
+            ControlledInputHandler.switchToSlot = best.getLeft().getSlotToUse(player, hotbar);
         }
     }
 

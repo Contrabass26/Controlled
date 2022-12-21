@@ -1,6 +1,6 @@
 package com.contrabass.controlled.mixin;
 
-import com.contrabass.controlled.InputHandler;
+import com.contrabass.controlled.ControlledInputHandler;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.input.KeyboardInput;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,6 +13,6 @@ public class KeyboardInputMixin extends Input {
 
     @Inject(method = "tick(ZF)V", at = @At("TAIL"))
     public void tick(boolean slowDown, float factor, CallbackInfo callback) {
-        InputHandler.handleKeys(this, slowDown, factor);
+        ControlledInputHandler.handleKeys(this, slowDown, factor);
     }
 }
