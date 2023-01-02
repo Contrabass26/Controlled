@@ -1,9 +1,8 @@
-package com.contrabass.controlled.clutch_handler;
+package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledClient;
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.MathUtils;
-import com.contrabass.controlled.ShiftBridgeHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

@@ -1,6 +1,6 @@
 package com.contrabass.controlled;
 
-import com.contrabass.controlled.clutch_handler.ClutchHandler;
+import com.contrabass.controlled.handler.ClutchHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;

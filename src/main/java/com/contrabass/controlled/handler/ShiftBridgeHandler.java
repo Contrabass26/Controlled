@@ -1,5 +1,8 @@
-package com.contrabass.controlled;
+package com.contrabass.controlled.handler;
 
+import com.contrabass.controlled.ControlledInputHandler;
+import com.contrabass.controlled.ControlledKeyBindings;
+import com.contrabass.controlled.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;

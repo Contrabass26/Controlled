@@ -1,6 +1,7 @@
 package com.contrabass.controlled;
 
-import com.contrabass.controlled.clutch_handler.ClutchHandler;
+import com.contrabass.controlled.handler.ClutchHandler;
+import com.contrabass.controlled.handler.ShiftBridgeHandler;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;

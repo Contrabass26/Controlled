@@ -1,7 +1,7 @@
 package com.contrabass.controlled.mixin;
 
 import com.contrabass.controlled.ControlledInputHandler;
-import com.contrabass.controlled.ShiftBridgeHandler;
+import com.contrabass.controlled.handler.ShiftBridgeHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.Nullable;

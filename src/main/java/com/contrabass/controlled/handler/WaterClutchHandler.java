@@ -1,4 +1,4 @@
-package com.contrabass.controlled.clutch_handler;
+package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledInputHandler;
 import net.minecraft.client.MinecraftClient;

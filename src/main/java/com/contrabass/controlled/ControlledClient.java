@@ -1,6 +1,6 @@
 package com.contrabass.controlled;
 
-import com.contrabass.controlled.clutch_handler.*;
+import com.contrabass.controlled.handler.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.network.ClientPlayerEntity;
