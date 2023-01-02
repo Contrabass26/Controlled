@@ -1,6 +1,7 @@
 package com.contrabass.controlled.mixin;
 
 import com.contrabass.controlled.ControlledInputHandler;
+import com.contrabass.controlled.ShiftBridgeHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,7 @@ public abstract class InputEventMixin {
     @Inject(method = "handleInputEvents()V", at = @At("TAIL"))
     public void handleInputEvents(CallbackInfo callback) {
         assert player != null;
+        ShiftBridgeHandler.tick(player);
         ControlledInputHandler.handleInputEvents(this::doItemUse, this::doAttack, player, (MinecraftClient) ((Object) this));
     }
 }

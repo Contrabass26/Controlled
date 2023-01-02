@@ -7,6 +7,8 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.joml.Vector2d;
 
+import java.util.Arrays;
+
 public class ControlledInputHandler {
     
     public static Vector2d target = null;
@@ -17,6 +19,7 @@ public class ControlledInputHandler {
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
     public static Float moveToPitch = null;
+    public static Boolean[] wasdOverrides = new Boolean[4];
 
     private ControlledInputHandler() {}
 
@@ -24,6 +27,7 @@ public class ControlledInputHandler {
         target = null;
         shift = null;
         space = null;
+        Arrays.fill(wasdOverrides, null);
     }
     
     public static void handleKeys(Input keyboardInput, boolean slowDown, float factor) {
@@ -38,6 +42,10 @@ public class ControlledInputHandler {
             keyboardInput.pressingBack = keys[2];
             keyboardInput.pressingLeft = keys[3];
         }
+        if (wasdOverrides[0] != null) keyboardInput.pressingForward = wasdOverrides[0];
+        if (wasdOverrides[1] != null) keyboardInput.pressingRight = wasdOverrides[1];
+        if (wasdOverrides[2] != null) keyboardInput.pressingBack = wasdOverrides[2];
+        if (wasdOverrides[3] != null) keyboardInput.pressingLeft = wasdOverrides[3];
         // Other
         keyboardInput.movementForward = getMovementMultiplier(keyboardInput.pressingForward, keyboardInput.pressingBack);
         keyboardInput.movementSideways = getMovementMultiplier(keyboardInput.pressingLeft, keyboardInput.pressingRight);

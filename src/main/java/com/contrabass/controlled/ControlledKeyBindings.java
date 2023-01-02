@@ -13,7 +13,8 @@ public class ControlledKeyBindings {
     private static final KeyBinding MLG_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.mlg", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, KEYBIND_GROUP));
     private static final KeyBinding FAST_RIGHT_CLICK_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.fast_right_click", InputUtil.Type.KEYSYM, GLFW.GLFW_MOUSE_BUTTON_4, KEYBIND_GROUP));
     private static final KeyBinding FAST_LEFT_CLICK_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.fast_left_click", InputUtil.Type.KEYSYM, GLFW.GLFW_MOUSE_BUTTON_5, KEYBIND_GROUP));
-    private static final KeyBinding LOCK_ROTATION_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.lock_rotation", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
+    private static final KeyBinding LOCK_ROTATION_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.lock_rotation", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, KEYBIND_GROUP));
+    private static final KeyBinding SHIFT_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.shift_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
 
     private ControlledKeyBindings() {}
 
@@ -24,7 +25,6 @@ public class ControlledKeyBindings {
     public static void handleKeyBindings(PlayerEntity player) {
         while (MLG_KEYBINDING.wasPressed()) {
             ClutchHandler.doNextClutch();
-            // Switch to best slot
             ClutchHandler.switchToBestSlot(player);
         }
         if (FAST_RIGHT_CLICK_KEYBINDING.isPressed()) {
@@ -34,10 +34,17 @@ public class ControlledKeyBindings {
             ControlledInputHandler.doNextLeftClick = true;
         }
         if (LOCK_ROTATION_KEYBINDING.isPressed()) {
-            float yaw = player.getYaw();
-            float newYaw = Math.round(yaw / 45f) * 45f;
-            player.setYaw(newYaw);
+            lockRotation(player);
         }
+        while (SHIFT_BRIDGE_KEYBINDING.wasPressed()) {
+            ShiftBridgeHandler.toggleActivated();
+        }
+    }
+
+    public static void lockRotation(PlayerEntity player) {
+        float yaw = player.getYaw();
+        float newYaw = Math.round(yaw / 45f) * 45f;
+        player.setYaw(newYaw);
     }
 
 }

@@ -1,6 +1,8 @@
 package com.contrabass.controlled;
 
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
 
@@ -51,6 +53,10 @@ public class MathUtils {
         return new Vector2d(v.x, v.z);
     }
 
+    public static Vector2d flatten(Vec3i v) {
+        return new Vector2d(v.getX(), v.getZ());
+    }
+
     public static Vector2d flatten(Vector3f v) {
         return new Vector2d(v.x, v.z);
     }
@@ -69,6 +75,31 @@ public class MathUtils {
 
     public static double roundFromZero(double d) {
         return d < 0 ? Math.floor(d) : Math.ceil(d);
+    }
+    
+    public static Vector2d roundInDirection(Vector2d v, Direction direction) {
+        Vector2d d = flatten(direction.getUnitVector());
+        double x;
+        double y;
+        if (d.x == 0) {
+            x = v.x;
+        } else if (d.x < 0) {
+            x = Math.floor(v.x);
+        } else {
+            x = Math.ceil(v.x);
+        }
+        if (d.y == 0) {
+            y = v.y;
+        } else if (d.y < 0) {
+            y = Math.floor(v.y);
+        } else {
+            y = Math.ceil(v.y);
+        }
+        return new Vector2d(x, y);
+    }
+
+    public static double getNonZeroPart(Vector2d v) {
+        return v.x == 0 ? v.y : v.x;
     }
 
     public static double addPlusMinus(double a, double b) {

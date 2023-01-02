@@ -38,8 +38,7 @@ public class LadderClutchHandler extends ClutchHandler {
     private static Pair<Direction, Integer> getBestDirection(World world, BlockPos playerPos) {
         int landingY = getTopBlock(world, playerPos);
         Pair<Direction, Integer> best = new Pair<>(null, Integer.MAX_VALUE);
-        for (Direction direction : Direction.values()) {
-            if (direction.getAxis() == Direction.Axis.Y) continue;
+        for (Direction direction : Direction.Type.HORIZONTAL) {
             // Find top block for this x and z
             int topY = getTopBlock(world, playerPos.offset(direction));
             int difference = topY - landingY;

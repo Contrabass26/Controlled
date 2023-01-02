@@ -37,8 +37,7 @@ public class HoneyBlockSideClutchHandler extends ClutchHandler {
         // Find block to clutch on side of
         BlockPos playerPos = player.getBlockPos();
         int landingY = getTopBlock(world, playerPos);
-        for (Direction direction : Direction.values()) {
-            if (direction.getAxis() == Direction.Axis.Y) continue;
+        for (Direction direction : Direction.Type.HORIZONTAL) {
             // Find top block for this x and z
             int topY = getTopBlock(world, playerPos.offset(direction));
             if (topY >= landingY) {
