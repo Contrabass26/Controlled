@@ -7,27 +7,29 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.joml.Vector2d;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class ControlledInputHandler {
-    
+
+    private static final List<InputModifier> INPUT_MODIFIERS = new ArrayList<>();
+
     public static Vector2d target = null;
     public static Boolean shift = null;
-    public static Boolean space = null;
+    public static Boolean jump = null;
     public static boolean doNextRightClick = false;
     public static boolean doNextLeftClick = false;
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
     public static Float moveToPitch = null;
-    public static Boolean[] wasdOverrides = new Boolean[4];
 
     private ControlledInputHandler() {}
 
     private static void reset() {
         target = null;
+        jump = null;
         shift = null;
-        space = null;
-        Arrays.fill(wasdOverrides, null);
     }
     
     public static void handleKeys(Input keyboardInput, boolean slowDown, float factor) {
@@ -42,15 +44,15 @@ public class ControlledInputHandler {
             keyboardInput.pressingBack = keys[2];
             keyboardInput.pressingLeft = keys[3];
         }
-        if (wasdOverrides[0] != null) keyboardInput.pressingForward = wasdOverrides[0];
-        if (wasdOverrides[1] != null) keyboardInput.pressingRight = wasdOverrides[1];
-        if (wasdOverrides[2] != null) keyboardInput.pressingBack = wasdOverrides[2];
-        if (wasdOverrides[3] != null) keyboardInput.pressingLeft = wasdOverrides[3];
-        // Other
+        // Shift and jump fields
+        if (shift != null) keyboardInput.sneaking = shift;
+        if (jump != null) keyboardInput.jumping = jump;
+        // Input modifiers
+        INPUT_MODIFIERS.sort(InputModifier::compareTo);
+        INPUT_MODIFIERS.forEach(m -> m.accept(keyboardInput));
+        // Related calculations
         keyboardInput.movementForward = getMovementMultiplier(keyboardInput.pressingForward, keyboardInput.pressingBack);
         keyboardInput.movementSideways = getMovementMultiplier(keyboardInput.pressingLeft, keyboardInput.pressingRight);
-        keyboardInput.sneaking = shift == null ? keyboardInput.sneaking : shift;
-        keyboardInput.jumping = space == null ? keyboardInput.jumping : space;
         if (slowDown) {
             keyboardInput.movementSideways *= factor;
             keyboardInput.movementForward *= factor;
@@ -93,5 +95,13 @@ public class ControlledInputHandler {
         } else {
             return positive ? 1.0F : -1.0F;
         }
+    }
+
+    public static void addInputModifier(InputModifier modifier) {
+        INPUT_MODIFIERS.add(modifier);
+    }
+
+    public static void removeInputModifier(Predicate<String> idPredicate) {
+        INPUT_MODIFIERS.removeIf(m -> idPredicate.test(m.id));
     }
 }

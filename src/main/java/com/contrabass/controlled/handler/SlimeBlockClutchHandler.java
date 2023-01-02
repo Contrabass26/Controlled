@@ -16,7 +16,7 @@ public class SlimeBlockClutchHandler extends ClutchHandler {
     @Override
     public void handle(PlayerEntity player, Runnable useItem) {
         if (releaseSpaceNext) {
-            ControlledInputHandler.space = true;
+            ControlledInputHandler.jump = true;
             releaseSpaceNext = false;
         }
         if (!player.isOnGround()) {
@@ -29,7 +29,7 @@ public class SlimeBlockClutchHandler extends ClutchHandler {
                 } else {
                     targetCentre(player);
                 }
-                ControlledInputHandler.space = true;
+                ControlledInputHandler.jump = true;
             }
         } else {
             finishClutch();

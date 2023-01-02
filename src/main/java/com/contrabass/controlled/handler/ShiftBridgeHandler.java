@@ -2,6 +2,7 @@ package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.ControlledKeyBindings;
+import com.contrabass.controlled.InputModifier;
 import com.contrabass.controlled.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,6 +12,8 @@ import org.joml.Vector2d;
 
 public class ShiftBridgeHandler {
 
+    private static final String MODIFIER_KEY = "shift_bridge";
+
     public static boolean activated = false;
 
     public static void tick(PlayerEntity player) {
@@ -19,9 +22,6 @@ public class ShiftBridgeHandler {
             // Rotation
             ControlledKeyBindings.lockRotation(player);
             ControlledInputHandler.moveToPitch = 78f;
-            // Walk backwards
-            ControlledInputHandler.wasdOverrides[1] = true;
-            ControlledInputHandler.wasdOverrides[2] = true;
             // Click
             if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult blockHitResult && blockHitResult.getSide() == bridgeDirection) {
                 ControlledInputHandler.doNextRightClick = true;
@@ -37,5 +37,11 @@ public class ShiftBridgeHandler {
 
     public static void toggleActivated() {
         activated = !activated;
+        if (activated) {
+            ControlledInputHandler.addInputModifier(InputModifier.s(true, 0, MODIFIER_KEY));
+            ControlledInputHandler.addInputModifier(InputModifier.d(true, 0, MODIFIER_KEY));
+        } else {
+            ControlledInputHandler.removeInputModifier(s -> s.equals(MODIFIER_KEY));
+        }
     }
 }
