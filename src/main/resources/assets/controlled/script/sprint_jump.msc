@@ -1,0 +1,14 @@
+w start
+next
+sprint start
+loop -1
+wait PLAYER_ON_GROUND
+jump start
+next
+jump stop
+pool
+next tail
+sprint stop
+w stop
+jump stop
+next

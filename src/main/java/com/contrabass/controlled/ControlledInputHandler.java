@@ -4,6 +4,7 @@ import com.contrabass.controlled.handler.ClutchHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.entity.player.PlayerEntity;
 import org.joml.Vector2d;
 
@@ -13,7 +14,8 @@ import java.util.function.Predicate;
 
 public class ControlledInputHandler {
 
-    private static final List<InputModifier> INPUT_MODIFIERS = new ArrayList<>();
+    private static final List<InputModifier.Movement> MOVEMENT_INPUT_MODIFIERS = new ArrayList<>();
+    private static final List<InputModifier.Key> KEY_INPUT_MODIFIERS = new ArrayList<>();
 
     public static Vector2d target = null;
     public static Boolean shift = null;
@@ -48,8 +50,8 @@ public class ControlledInputHandler {
         if (shift != null) keyboardInput.sneaking = shift;
         if (jump != null) keyboardInput.jumping = jump;
         // Input modifiers
-        INPUT_MODIFIERS.sort(InputModifier::compareTo);
-        INPUT_MODIFIERS.forEach(m -> m.accept(keyboardInput));
+        MOVEMENT_INPUT_MODIFIERS.sort(InputModifier::compareTo);
+        MOVEMENT_INPUT_MODIFIERS.forEach(m -> m.accept(keyboardInput));
         // Related calculations
         keyboardInput.movementForward = getMovementMultiplier(keyboardInput.pressingForward, keyboardInput.pressingBack);
         keyboardInput.movementSideways = getMovementMultiplier(keyboardInput.pressingLeft, keyboardInput.pressingRight);
@@ -60,7 +62,7 @@ public class ControlledInputHandler {
         reset();
     }
 
-    public static void handleInputEvents(Runnable itemUse, Runnable attack, PlayerEntity player, MinecraftClient client) {
+    public static void handleInputEvents(Runnable itemUse, Runnable attack, PlayerEntity player, MinecraftClient client, GameOptions options) {
         for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
             handler.handle(player, itemUse);
         }
@@ -87,6 +89,9 @@ public class ControlledInputHandler {
             }
             switchToSlot = null;
         }
+        // Input modifiers
+        KEY_INPUT_MODIFIERS.sort(InputModifier::compareTo);
+        KEY_INPUT_MODIFIERS.forEach(m -> m.accept(options));
     }
 
     private static float getMovementMultiplier(boolean positive, boolean negative) {
@@ -97,11 +102,24 @@ public class ControlledInputHandler {
         }
     }
 
-    public static void addInputModifier(InputModifier modifier) {
-        INPUT_MODIFIERS.add(modifier);
+    public static void addInputModifier(InputModifier<?> modifier) {
+        if (modifier instanceof InputModifier.Movement movementModifier) {
+            MOVEMENT_INPUT_MODIFIERS.add(movementModifier);
+        } else if (modifier instanceof InputModifier.Key keyModifier) {
+            KEY_INPUT_MODIFIERS.add(keyModifier);
+        } else {
+            throw new IllegalArgumentException("Expected InputModifier.Key or InputModifier.Movement, got " + modifier.getClass());
+        }
     }
 
     public static void removeInputModifier(Predicate<String> idPredicate) {
-        INPUT_MODIFIERS.removeIf(m -> idPredicate.test(m.id));
+        MOVEMENT_INPUT_MODIFIERS.removeIf(m -> idPredicate.test(m.id));
+        KEY_INPUT_MODIFIERS.removeIf(m -> idPredicate.test(m.id));
+    }
+
+    public static void lockRotation(PlayerEntity player) {
+        float yaw = player.getYaw();
+        float newYaw = Math.round(yaw / 45f) * 45f;
+        player.setYaw(newYaw);
     }
 }

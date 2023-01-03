@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +19,22 @@ import java.util.Map;
 public class Script {
 
     private static final Map<String, Script> SCRIPTS = new HashMap<>();
-    private static final int SCRIPT_START = 2;
 
-    private int index = SCRIPT_START;
-    private boolean isRunning = false;
-    private final boolean loop;
+    public enum Trigger {
+        PLAYER_ON_GROUND
+    }
+
+    private int index = 0;
+    /**
+     * 0 = not running
+     * 1 = running
+     * 2 = waiting
+     */
+    private int state = 0;
     private final List<String> lines;
     private final String modifierId;
+    private final List<Loop> loopStack = new ArrayList<>();
+    private Trigger trigger = null;
 
     Script(Identifier identifier, ResourceManager manager) throws IOException {
         String name = identifier.getPath();
@@ -33,12 +43,33 @@ public class Script {
         InputStream stream = manager.getResource(identifier).orElseThrow().getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         lines = reader.lines().toList();
-        loop = Boolean.parseBoolean(lines.get(0));
+        if (!lines.get(lines.size() - 1).equals("next")) {
+            lines.add("next");
+        }
+    }
+
+    public static void handleTrigger(Trigger trigger) {
+        SCRIPTS.values().forEach(s -> s.trigger(trigger));
+    }
+
+    private void trigger(Trigger trigger) {
+        if (this.trigger == trigger) {
+            this.trigger = null;
+        }
     }
 
     public void toggleRunning() {
-        isRunning = !isRunning;
-        index = SCRIPT_START;
+        if (state == 0) {
+            state = 1;
+        } else {
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).contains("tail")) {
+                    index = i + 1;
+                    loopStack.clear();
+                    break;
+                }
+            }
+        }
     }
 
     public static void register(Identifier identifier, ResourceManager resourceManager) throws IOException {
@@ -51,46 +82,97 @@ public class Script {
     }
 
     private void advanceTick() {
-        while (!lines.get(index).toLowerCase().startsWith("next")) {
-            execute(lines.get(index));
+        if (state == 1 && trigger == null) {
+            while (!lines.get(index).toLowerCase().startsWith("next")) {
+                if (!execute(lines.get(index))) break;
+                index++;
+            }
             index++;
-        }
-        index++;
-        if (index == lines.size()) {
-            index = SCRIPT_START;
-            if (!loop) isRunning = false;
+            if (index == lines.size()) {
+                index = 0;
+                state = 0;
+                loopStack.clear();
+            }
         }
     }
 
     public static void tick() {
-        for (Script script : SCRIPTS.values()) {
-            if (script.isRunning) {
-                script.advanceTick();
-            }
-        }
+        SCRIPTS.values().forEach(Script::advanceTick);
     }
 
-    private void execute(String line) {
-        if (line.startsWith("//")) return;
+    /**
+     * @param line The line to parse and execute
+     * @return Whether to continue executing
+     */
+    private boolean execute(String line) {
+        if (line.startsWith("//")) return true;
         String[] words = line.toLowerCase().split(" ");
         try {
-            switch (words[1]) {
-                case "start" -> ControlledInputHandler.addInputModifier(createModifier(words[0]));
-                case "stop" -> ControlledInputHandler.removeInputModifier(s -> s.equals(modifierId + ":" + words[0].toLowerCase()));
-                default -> throw new ScriptException.InvalidArgument(words[1], modifierId.substring(7), index);
+            switch (words[0]) {
+                case "wait" -> {
+                    trigger = Trigger.valueOf(words[1].toUpperCase());
+                    return false;
+                }
+                case "loop" -> loopStack.add(new Loop(this.index + 1, Integer.parseInt(words[1])));
+                case "pool" -> {
+                    int topPos = loopStack.size() - 1;
+                    Loop topLoop = loopStack.get(topPos);
+                    boolean end = topLoop.spin();
+                    if (end) {
+                        loopStack.remove(topPos);
+                    } else {
+                        this.index = topLoop.returnIndex - 1;
+                    }
+                }
+                case "use" -> ControlledInputHandler.doNextRightClick = true;
+                default -> {
+                    switch (words[1]) {
+                        case "start" -> ControlledInputHandler.addInputModifier(createModifier(words[0]));
+                        case "stop" -> ControlledInputHandler.removeInputModifier(s -> s.equals(modifierId + ":" + words[0].toLowerCase()));
+                        default -> throw new ScriptException.InvalidArgument(words[1], modifierId.substring(7), this.index);
+                    }
+                }
             }
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | ArrayIndexOutOfBoundsException e) {
-            throw new ScriptException(modifierId.substring(7), index);
+            throw new ScriptException(modifierId.substring(7), this.index);
         }
+        return true;
     }
 
     public static void clearScripts() {
         SCRIPTS.clear();
     }
 
-    private InputModifier createModifier(String command) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private InputModifier<?> createModifier(String command) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String methodName = command.toLowerCase();
-        Method method = InputModifier.class.getMethod(methodName, boolean.class, int.class, String.class);
-        return (InputModifier) method.invoke(null, true, 0, modifierId + ":" + methodName);
+        try {
+            Method method = InputModifier.Movement.class.getMethod(methodName, boolean.class, int.class, String.class);
+            return (InputModifier.Movement) method.invoke(null, true, 0, modifierId + ":" + methodName);
+        } catch (NoSuchMethodException e) {
+            Method method = InputModifier.Key.class.getMethod(methodName, boolean.class, int.class, String.class);
+            return (InputModifier.Key) method.invoke(null, true, 0, modifierId + ":" + methodName);
+        }
+    }
+
+    private static class Loop {
+
+        public final int returnIndex;
+        private int iterationsLeft;
+
+        private Loop(int returnIndex, int iterations) {
+            this.returnIndex = returnIndex;
+            iterationsLeft = iterations;
+        }
+
+        /**
+         * @return Whether the loop is finished
+         */
+        public boolean spin() {
+            if (iterationsLeft != -1) {
+                iterationsLeft--;
+                return iterationsLeft == 0;
+            }
+            return false;
+        }
     }
 }

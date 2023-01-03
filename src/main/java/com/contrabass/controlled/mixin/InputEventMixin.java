@@ -4,7 +4,9 @@ import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.handler.ShiftBridgeHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.GameOptions;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,10 +22,12 @@ public abstract class InputEventMixin {
 
     @Shadow protected abstract boolean doAttack();
 
+    @Shadow @Final public GameOptions options;
+
     @Inject(method = "handleInputEvents()V", at = @At("TAIL"))
     public void handleInputEvents(CallbackInfo callback) {
         assert player != null;
         ShiftBridgeHandler.tick(player);
-        ControlledInputHandler.handleInputEvents(this::doItemUse, this::doAttack, player, (MinecraftClient) ((Object) this));
+        ControlledInputHandler.handleInputEvents(this::doItemUse, this::doAttack, player, (MinecraftClient) ((Object) this), options);
     }
 }

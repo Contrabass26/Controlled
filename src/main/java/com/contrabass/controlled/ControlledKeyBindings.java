@@ -39,7 +39,7 @@ public class ControlledKeyBindings {
             ControlledInputHandler.doNextLeftClick = true;
         }
         if (LOCK_ROTATION_KEYBINDING.isPressed()) {
-            lockRotation(player);
+            ControlledInputHandler.lockRotation(player);
         }
         while (SHIFT_BRIDGE_KEYBINDING.wasPressed()) {
             ShiftBridgeHandler.toggleActivated();
@@ -50,11 +50,5 @@ public class ControlledKeyBindings {
                 scriptConsumed = true;
             }
         } else scriptConsumed = false;
-    }
-
-    public static void lockRotation(PlayerEntity player) {
-        float yaw = player.getYaw();
-        float newYaw = Math.round(yaw / 45f) * 45f;
-        player.setYaw(newYaw);
     }
 }
