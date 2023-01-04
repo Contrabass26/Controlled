@@ -1,8 +1,6 @@
 package com.contrabass.controlled;
 
 import com.contrabass.controlled.handler.ClutchHandler;
-import com.contrabass.controlled.handler.ShiftBridgeHandler;
-import com.contrabass.controlled.handler.UpwardShiftBridgeHandler;
 import com.contrabass.controlled.script.Script;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
@@ -18,9 +16,8 @@ public class ControlledKeyBindings {
     private static final KeyBinding FAST_LEFT_CLICK_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.fast_left_click", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_I, KEYBIND_GROUP));
     private static final KeyBinding LOCK_ROTATION_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.lock_rotation", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, KEYBIND_GROUP));
     private static final KeyBinding SHIFT_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.shift_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
-    private static final KeyBinding TEST_SCRIPT_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.test_script", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, KEYBIND_GROUP));
-
-    private static boolean scriptConsumed = false;
+    private static final KeyBinding UPWARD_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.upward_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
+    private static final KeyBinding TEST_SCRIPT_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.script", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, KEYBIND_GROUP));
 
     private ControlledKeyBindings() {}
 
@@ -42,14 +39,12 @@ public class ControlledKeyBindings {
         if (LOCK_ROTATION_KEYBINDING.isPressed()) {
             ControlledInputHandler.lockRotation(player);
         }
-        while (SHIFT_BRIDGE_KEYBINDING.wasPressed()) {
-            UpwardShiftBridgeHandler.toggleActivated();
+        try {
+            Script.get("shift_bridge").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
+            Script.get("upward_bridge").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
+            Script.get("test").handleKeybind(TEST_SCRIPT_KEYBINDING.isPressed());
+        } catch (NullPointerException e) {
+            // Not an issue; scripts have not been initialised yet
         }
-        if (TEST_SCRIPT_KEYBINDING.wasPressed()) {
-            if (!scriptConsumed) {
-                Script.get("shift_bridge").toggleRunning();
-                scriptConsumed = true;
-            }
-        } else scriptConsumed = false;
     }
 }

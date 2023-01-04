@@ -26,6 +26,7 @@ public class Script {
     private final List<Loop> loopStack = new ArrayList<>();
     private Condition condition = null;
     private boolean waitingIf = false;
+    private boolean consumed = false;
 
     Script(Identifier identifier, ResourceManager manager) throws IOException {
         String name = identifier.getPath();
@@ -36,6 +37,17 @@ public class Script {
         lines = reader.lines().map(String::strip).toList();
         if (!lines.get(lines.size() - 1).equals("next")) {
             lines.add("next");
+        }
+    }
+
+    public void handleKeybind(boolean pressed) {
+        if (pressed) {
+            if (!consumed) {
+                toggleRunning();
+                consumed = true;
+            }
+        } else {
+            consumed = false;
         }
     }
 
@@ -144,14 +156,8 @@ public class Script {
                 // Continuous commands
                 default -> {
                     switch (words[1]) {
-                        case "start" -> {
-//                            ControlledInputHandler.removeInputModifier(s -> s.equals(modifierId + ":" + words[0]));
-                            ControlledInputHandler.addInputModifier(createModifier(words[0], true));
-                        }
-                        case "stop" -> {
-//                            ControlledInputHandler.removeInputModifier(s -> s.equals(modifierId + ":" + words[0]));
-                            ControlledInputHandler.addInputModifier(createModifier(words[0], false));
-                        }
+                        case "start" -> ControlledInputHandler.addInputModifier(createModifier(words[0], true));
+                        case "stop" -> ControlledInputHandler.addInputModifier(createModifier(words[0], false));
                         default -> throw new ScriptException.InvalidArgument(words[1], modifierId.substring(7), this.index);
                     }
                 }

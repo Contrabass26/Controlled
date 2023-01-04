@@ -1,0 +1,28 @@
+pitch 78
+lockRotation
+s start
+d start
+shift start
+loop -1
+if targetingBlock $backwards
+shift stop
+use
+jump start
+loop 4
+next
+pool
+use
+loop 2
+next
+pool
+jump stop
+shift start
+next
+fi
+pool
+next tail
+s stop
+d stop
+jump stop
+shift stop
+next

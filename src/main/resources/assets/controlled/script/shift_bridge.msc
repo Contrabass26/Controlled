@@ -4,7 +4,7 @@ next
 s start
 d start
 loop -1
-if distanceBackwards 0.15 0.95
+if distanceBackwards 0.25 0.9
 shift stop
 else
 shift start
