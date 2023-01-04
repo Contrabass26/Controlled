@@ -8,9 +8,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Direction;
 
-public class ShiftBridgeHandler {
+public class UpwardShiftBridgeHandler {
 
-    private static final String MODIFIER_KEY = "shift_bridge";
+    private static final String MODIFIER_KEY = "upward_shift_bridge";
 
     public static boolean activated = false;
 
@@ -21,12 +21,18 @@ public class ShiftBridgeHandler {
             ControlledInputHandler.lockRotation(player);
             ControlledInputHandler.moveToPitch = 78f;
             // Click
-            if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult blockHitResult && blockHitResult.getSide() == bridgeDirection) {
+            if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult) {
                 ControlledInputHandler.doNextRightClick = true;
             }
             // Shifting
             double difference = ControlledUtils.getDistanceBackwards(player, bridgeDirection);
-            ControlledInputHandler.shift = !(difference > 0.25 && difference < 0.9);
+            if (difference >= 0.25) {
+                ControlledInputHandler.shift = true;
+                ControlledInputHandler.jump = false;
+            } else {
+                ControlledInputHandler.shift = false;
+                ControlledInputHandler.jump = true;
+            }
         }
     }
 

@@ -2,6 +2,8 @@ package com.contrabass.controlled.script;
 
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.InputModifier;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
@@ -11,30 +13,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Script {
 
     private static final Map<String, Script> SCRIPTS = new HashMap<>();
 
-    public enum Trigger {
-        PLAYER_ON_GROUND
-    }
-
     private int index = 0;
-    /**
-     * 0 = not running
-     * 1 = running
-     * 2 = waiting
-     */
-    private int state = 0;
+    private boolean running = false;
     private final List<String> lines;
     private final String modifierId;
     private final List<Loop> loopStack = new ArrayList<>();
-    private Trigger trigger = null;
+    private Condition condition = null;
+    private boolean waitingIf = false;
 
     Script(Identifier identifier, ResourceManager manager) throws IOException {
         String name = identifier.getPath();
@@ -42,30 +33,21 @@ public class Script {
         modifierId = "script:" + name;
         InputStream stream = manager.getResource(identifier).orElseThrow().getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        lines = reader.lines().toList();
+        lines = reader.lines().map(String::strip).toList();
         if (!lines.get(lines.size() - 1).equals("next")) {
             lines.add("next");
         }
     }
 
-    public static void handleTrigger(Trigger trigger) {
-        SCRIPTS.values().forEach(s -> s.trigger(trigger));
-    }
-
-    private void trigger(Trigger trigger) {
-        if (this.trigger == trigger) {
-            this.trigger = null;
-        }
-    }
-
     public void toggleRunning() {
-        if (state == 0) {
-            state = 1;
+        if (!running) {
+            running = true;
         } else {
             for (int i = 0; i < lines.size(); i++) {
                 if (lines.get(i).contains("tail")) {
                     index = i + 1;
                     loopStack.clear();
+                    waitingIf = false;
                     break;
                 }
             }
@@ -82,16 +64,23 @@ public class Script {
     }
 
     private void advanceTick() {
-        if (state == 1 && trigger == null) {
-            while (!lines.get(index).toLowerCase().startsWith("next")) {
+        if (condition != null) {
+            if (condition.test(MinecraftClient.getInstance().player)) {
+                condition = null;
+            }
+        }
+        if (running && condition == null) {
+            while (!lines.get(index).startsWith("next")) {
                 if (!execute(lines.get(index))) break;
                 index++;
             }
             index++;
             if (index == lines.size()) {
                 index = 0;
-                state = 0;
+                running = false;
                 loopStack.clear();
+                ControlledInputHandler.removeInputModifier(s -> s.startsWith(modifierId));
+                waitingIf = false;
             }
         }
     }
@@ -106,12 +95,35 @@ public class Script {
      */
     private boolean execute(String line) {
         if (line.startsWith("//")) return true;
-        String[] words = line.toLowerCase().split(" ");
+        String[] words = line.split(" ");
         try {
+            // If statement control commands
+            if (line.equals("fi")) {
+                waitingIf = false;
+                return true;
+            } else if (line.equals("else")) {
+                waitingIf = !waitingIf;
+                return true;
+            } else if (waitingIf) {
+                return true;
+            }
+            // One-time commands
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            assert player != null;
             switch (words[0]) {
                 case "wait" -> {
-                    trigger = Trigger.valueOf(words[1].toUpperCase());
-                    return false;
+                    condition = Condition.get(words);
+                    if (condition.test(player)) {
+                        condition = null;
+                    } else {
+                        return false;
+                    }
+                }
+                case "if" -> {
+                    Condition condition = Condition.get(words);
+                    if (!condition.test(player)) {
+                        waitingIf = true;
+                    }
                 }
                 case "loop" -> loopStack.add(new Loop(this.index + 1, Integer.parseInt(words[1])));
                 case "pool" -> {
@@ -125,10 +137,21 @@ public class Script {
                     }
                 }
                 case "use" -> ControlledInputHandler.doNextRightClick = true;
+                case "attack" -> ControlledInputHandler.doNextLeftClick = true;
+                case "yaw" -> ControlledInputHandler.moveToYaw = Float.parseFloat(words[1]);
+                case "pitch" -> ControlledInputHandler.moveToPitch = Float.parseFloat(words[1]);
+                case "lockRotation" -> ControlledInputHandler.lockRotation(player);
+                // Continuous commands
                 default -> {
                     switch (words[1]) {
-                        case "start" -> ControlledInputHandler.addInputModifier(createModifier(words[0]));
-                        case "stop" -> ControlledInputHandler.removeInputModifier(s -> s.equals(modifierId + ":" + words[0].toLowerCase()));
+                        case "start" -> {
+//                            ControlledInputHandler.removeInputModifier(s -> s.equals(modifierId + ":" + words[0]));
+                            ControlledInputHandler.addInputModifier(createModifier(words[0], true));
+                        }
+                        case "stop" -> {
+//                            ControlledInputHandler.removeInputModifier(s -> s.equals(modifierId + ":" + words[0]));
+                            ControlledInputHandler.addInputModifier(createModifier(words[0], false));
+                        }
                         default -> throw new ScriptException.InvalidArgument(words[1], modifierId.substring(7), this.index);
                     }
                 }
@@ -143,14 +166,13 @@ public class Script {
         SCRIPTS.clear();
     }
 
-    private InputModifier<?> createModifier(String command) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String methodName = command.toLowerCase();
+    private InputModifier<?> createModifier(String command, boolean value) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         try {
-            Method method = InputModifier.Movement.class.getMethod(methodName, boolean.class, int.class, String.class);
-            return (InputModifier.Movement) method.invoke(null, true, 0, modifierId + ":" + methodName);
+            Method method = InputModifier.Movement.class.getMethod(command, boolean.class, int.class, String.class);
+            return (InputModifier.Movement) method.invoke(null, value, 0, modifierId + ":" + command);
         } catch (NoSuchMethodException e) {
-            Method method = InputModifier.Key.class.getMethod(methodName, boolean.class, int.class, String.class);
-            return (InputModifier.Key) method.invoke(null, true, 0, modifierId + ":" + methodName);
+            Method method = InputModifier.Key.class.getMethod(command, boolean.class, int.class, String.class);
+            return (InputModifier.Key) method.invoke(null, value, 0, modifierId + ":" + command);
         }
     }
 

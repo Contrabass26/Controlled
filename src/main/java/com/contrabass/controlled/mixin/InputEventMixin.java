@@ -2,6 +2,7 @@ package com.contrabass.controlled.mixin;
 
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.handler.ShiftBridgeHandler;
+import com.contrabass.controlled.handler.UpwardShiftBridgeHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
@@ -28,6 +29,7 @@ public abstract class InputEventMixin {
     public void handleInputEvents(CallbackInfo callback) {
         assert player != null;
         ShiftBridgeHandler.tick(player);
+        UpwardShiftBridgeHandler.tick(player);
         ControlledInputHandler.handleInputEvents(this::doItemUse, this::doAttack, player, (MinecraftClient) ((Object) this), options);
     }
 }

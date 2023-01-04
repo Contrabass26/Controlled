@@ -2,7 +2,7 @@ w start
 next
 sprint start
 loop -1
-wait PLAYER_ON_GROUND
+wait playerOnGround
 jump start
 next
 jump stop

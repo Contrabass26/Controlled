@@ -1,4 +1,4 @@
-package com.contrabass.controlled;
+package com.contrabass.controlled.util;
 
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;

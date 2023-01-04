@@ -25,7 +25,6 @@ public abstract class InputModifier<T> implements Comparable<InputModifier<?>>, 
     public boolean equals(Object other) {
         if (this == other) return true;
         if (other instanceof InputModifier that) {
-            if (priority != that.priority) return false;
             return id.equals(that.id);
         }
         return false;

@@ -1,0 +1,19 @@
+pitch 78
+lockRotation
+next
+s start
+d start
+loop -1
+if distanceBackwards 0.15 0.95
+shift stop
+else
+shift start
+fi
+use
+next
+pool
+next tail
+shift stop
+s stop
+d stop
+next

@@ -2,7 +2,7 @@ package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledClient;
 import com.contrabass.controlled.ControlledInputHandler;
-import com.contrabass.controlled.MathUtils;
+import com.contrabass.controlled.util.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -34,6 +34,7 @@ public abstract class ClutchHandler {
     public static void doNextClutch() {
         doNextClutch = true;
         ShiftBridgeHandler.activated = false;
+        UpwardShiftBridgeHandler.activated = false;
     }
 
     public static boolean willClutchNext() {

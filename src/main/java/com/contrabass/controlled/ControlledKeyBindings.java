@@ -2,6 +2,7 @@ package com.contrabass.controlled;
 
 import com.contrabass.controlled.handler.ClutchHandler;
 import com.contrabass.controlled.handler.ShiftBridgeHandler;
+import com.contrabass.controlled.handler.UpwardShiftBridgeHandler;
 import com.contrabass.controlled.script.Script;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
@@ -42,11 +43,11 @@ public class ControlledKeyBindings {
             ControlledInputHandler.lockRotation(player);
         }
         while (SHIFT_BRIDGE_KEYBINDING.wasPressed()) {
-            ShiftBridgeHandler.toggleActivated();
+            UpwardShiftBridgeHandler.toggleActivated();
         }
         if (TEST_SCRIPT_KEYBINDING.wasPressed()) {
             if (!scriptConsumed) {
-                Script.get("test").toggleRunning();
+                Script.get("shift_bridge").toggleRunning();
                 scriptConsumed = true;
             }
         } else scriptConsumed = false;
