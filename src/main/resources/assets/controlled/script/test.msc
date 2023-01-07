@@ -1,0 +1,13 @@
+w start
+sprint start
+jump start
+pitch 90
+loop 5
+next
+pool
+use
+next tail
+sprint stop
+w stop
+jump stop
+next

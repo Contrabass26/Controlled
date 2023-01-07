@@ -57,8 +57,11 @@ public interface Condition extends Predicate<PlayerEntity> {
      * @throws IllegalAccessException Error finding expression
      */
     static Condition targetingBlock(String sideStr) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        Expression expression = parseArgument(sideStr);
+        Expression expression = sideStr.equals("any") ? null : parseArgument(sideStr);
         return player -> {
+            if (expression == null) {
+                return MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult;
+            }
             Direction side = Direction.valueOf(expression.apply(player));
             return MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult hitResult && hitResult.getSide() == side;
         };

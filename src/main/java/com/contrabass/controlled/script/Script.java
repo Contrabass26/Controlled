@@ -51,6 +51,7 @@ public class Script {
 
     public void toggleRunning() {
         if (!running) {
+            stopAll();
             running = true;
         } else {
             for (int i = 0; i < lines.size(); i++) {
@@ -60,6 +61,14 @@ public class Script {
                     waitingIf = false;
                     break;
                 }
+            }
+        }
+    }
+
+    public static void stopAll() {
+        for (Script script : SCRIPTS.values()) {
+            if (script.running) {
+                script.toggleRunning();
             }
         }
     }
