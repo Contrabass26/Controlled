@@ -22,10 +22,10 @@ public class UpwardShiftBridgeHandler {
             ControlledInputHandler.moveToPitch = 78f;
             // Click
             if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult) {
-                ControlledInputHandler.doNextRightClick = true;
+                ControlledInputHandler.doNextRightClick = 1;
             }
             // Shifting
-            double difference = ControlledUtils.getDistanceBackwards(player, bridgeDirection);
+            double difference = ControlledUtils.getDistanceBackwards(player.getPos(), bridgeDirection);
             if (difference >= 0.25) {
                 ControlledInputHandler.shift = true;
                 ControlledInputHandler.jump = false;

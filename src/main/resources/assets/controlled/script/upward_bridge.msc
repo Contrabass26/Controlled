@@ -4,7 +4,7 @@ s start
 d start
 shift start
 loop -1
-if targetingBlock $backwards
+if targetingBlock $backwardsDiagonal
 shift stop
 use
 jump start

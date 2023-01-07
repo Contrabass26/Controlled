@@ -22,10 +22,10 @@ public class ShiftBridgeHandler {
             ControlledInputHandler.moveToPitch = 78f;
             // Click
             if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult blockHitResult && blockHitResult.getSide() == bridgeDirection) {
-                ControlledInputHandler.doNextRightClick = true;
+                ControlledInputHandler.doNextRightClick = 1;
             }
             // Shifting
-            double difference = ControlledUtils.getDistanceBackwards(player, bridgeDirection);
+            double difference = ControlledUtils.getDistanceBackwards(player.getPos(), bridgeDirection);
             ControlledInputHandler.shift = !(difference > 0.25 && difference < 0.9);
         }
     }

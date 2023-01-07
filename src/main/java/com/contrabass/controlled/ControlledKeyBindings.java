@@ -31,10 +31,10 @@ public class ControlledKeyBindings {
             ClutchHandler.switchToBestSlot(player);
         }
         if (FAST_RIGHT_CLICK_KEYBINDING.isPressed()) {
-            ControlledInputHandler.doNextRightClick = true;
+            ControlledInputHandler.doNextRightClick = 1;
         }
         if (FAST_LEFT_CLICK_KEYBINDING.isPressed()) {
-            ControlledInputHandler.doNextLeftClick = true;
+            ControlledInputHandler.doNextLeftClick = 1;
         }
         if (LOCK_ROTATION_KEYBINDING.isPressed()) {
             ControlledInputHandler.lockRotation(player);

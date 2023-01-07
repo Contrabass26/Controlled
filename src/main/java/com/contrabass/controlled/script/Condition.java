@@ -38,6 +38,17 @@ public interface Condition extends Predicate<PlayerEntity> {
         };
     }
 
+    static Condition distanceFromLeft(String minStr, String maxStr) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Expression minExpression = parseArgument(minStr);
+        Expression maxExpression = parseArgument(maxStr);
+        return player -> {
+            double distance = ControlledUtils.getDistanceBackwards(player.getPos(), player.getHorizontalFacing().rotateYClockwise());
+            double min = Double.parseDouble(minExpression.apply(player));
+            double max = Double.parseDouble(maxExpression.apply(player));
+            return min <= distance && distance <= max;
+        };
+    }
+
     /**
      * @param sideStr The Direction, in String form, of the face the player should be targeting
      * @return [INDIRECT] Whether the player has is targeting the specified side of a block

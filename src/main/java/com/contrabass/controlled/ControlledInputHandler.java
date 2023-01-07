@@ -21,8 +21,8 @@ public class ControlledInputHandler {
     public static Vector2d target = null;
     public static Boolean shift = null;
     public static Boolean jump = null;
-    public static boolean doNextRightClick = false;
-    public static boolean doNextLeftClick = false;
+    public static int doNextRightClick = 0;
+    public static int doNextLeftClick = 0;
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
     public static Float moveToPitch = null;
@@ -67,13 +67,13 @@ public class ControlledInputHandler {
         for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
             handler.handle(player, itemUse);
         }
-        if (doNextRightClick) {
+        if (doNextRightClick > 0) {
             itemUse.run();
-            doNextRightClick = false;
+            if (doNextRightClick == 1) doNextRightClick = 0;
         }
-        if (doNextLeftClick) {
+        if (doNextLeftClick > 0) {
             attack.run();
-            doNextLeftClick = false;
+            if (doNextLeftClick == 1) doNextLeftClick = 0;
         }
         if (moveToYaw != null) {
             player.setYaw(moveToYaw);

@@ -27,17 +27,15 @@ public class Script {
     private Condition condition = null;
     private boolean waitingIf = false;
     private boolean consumed = false;
+    private final Map<String, String> variables = new HashMap<>();
 
-    Script(Identifier identifier, ResourceManager manager) throws IOException {
+    private Script(Identifier identifier, ResourceManager manager) throws IOException {
         String name = identifier.getPath();
         name = name.substring(7, name.length() - 4);
         modifierId = "script:" + name;
         InputStream stream = manager.getResource(identifier).orElseThrow().getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         lines = reader.lines().map(String::strip).toList();
-        if (!lines.get(lines.size() - 1).equals("next")) {
-            lines.add("next");
-        }
     }
 
     public void handleKeybind(boolean pressed) {
@@ -108,6 +106,11 @@ public class Script {
     private boolean execute(String line) {
         if (line.startsWith("//")) return true;
         String[] words = line.split(" ");
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].startsWith("#")) {
+                words[i] = variables.get(words[i].substring(1));
+            }
+        }
         try {
             // If statement control commands
             if (line.equals("fi")) {
@@ -123,6 +126,7 @@ public class Script {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             assert player != null;
             switch (words[0]) {
+                case "var" -> variables.put(words[1], words[2]);
                 case "wait" -> {
                     condition = Condition.get(words);
                     if (condition.test(player)) {
@@ -148,8 +152,14 @@ public class Script {
                         this.index = topLoop.returnIndex - 1;
                     }
                 }
-                case "use" -> ControlledInputHandler.doNextRightClick = true;
-                case "attack" -> ControlledInputHandler.doNextLeftClick = true;
+                case "use" -> {
+                    if (words.length == 1) ControlledInputHandler.doNextRightClick = 1;
+                    else ControlledInputHandler.doNextRightClick = (words[1].equals("start") ? 2 : 0);
+                }
+                case "attack" -> {
+                    if (words.length == 1) ControlledInputHandler.doNextLeftClick = 1;
+                    else ControlledInputHandler.doNextLeftClick = (words[1].equals("stop") ? 2 : 0);
+                }
                 case "yaw" -> ControlledInputHandler.moveToYaw = Float.parseFloat(words[1]);
                 case "pitch" -> ControlledInputHandler.moveToPitch = Float.parseFloat(words[1]);
                 case "lockRotation" -> ControlledInputHandler.lockRotation(player);
@@ -163,7 +173,7 @@ public class Script {
                 }
             }
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | ArrayIndexOutOfBoundsException e) {
-            throw new ScriptException(modifierId.substring(7), this.index);
+            throw new ScriptException(modifierId.substring(7), this.index, e);
         }
         return true;
     }
