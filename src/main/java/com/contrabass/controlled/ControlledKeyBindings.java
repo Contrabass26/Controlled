@@ -1,6 +1,7 @@
 package com.contrabass.controlled;
 
 import com.contrabass.controlled.handler.ClutchHandler;
+import com.contrabass.controlled.script.CodeScript;
 import com.contrabass.controlled.script.Script;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
@@ -37,11 +38,11 @@ public class ControlledKeyBindings {
             ControlledInputHandler.doNextLeftClick = 1;
         }
         if (LOCK_ROTATION_KEYBINDING.isPressed()) {
-            ControlledInputHandler.lockRotation(player);
+            ControlledInputHandler.lockRotation();
         }
         try {
-            Script.get("shift_bridge").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
-            Script.get("upward_bridge").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
+            CodeScript.get("BridgeScript").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
+            CodeScript.get("UpwardBridgeScript").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
             Script.get("extension").handleKeybind(TEST_SCRIPT_KEYBINDING.isPressed());
         } catch (NullPointerException e) {
             // Not an issue; scripts have not been initialised yet

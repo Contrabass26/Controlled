@@ -27,7 +27,7 @@ public class Script {
     private Condition condition = null;
     private boolean waitingIf = false;
     private boolean consumed = false;
-    private final Map<String, String> variables = new HashMap<>();
+    private double accumulator = 0;
 
     private Script(Identifier identifier, ResourceManager manager) throws IOException {
         String name = identifier.getPath();
@@ -115,11 +115,6 @@ public class Script {
     private boolean execute(String line) {
         if (line.startsWith("//")) return true;
         String[] words = line.split(" ");
-        for (int i = 0; i < words.length; i++) {
-            if (words[i].startsWith("#")) {
-                words[i] = variables.get(words[i].substring(1));
-            }
-        }
         try {
             // If statement control commands
             if (line.equals("fi")) {
@@ -135,7 +130,7 @@ public class Script {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             assert player != null;
             switch (words[0]) {
-                case "var" -> variables.put(words[1], words[2]);
+                case "acc" -> accumulator = Double.parseDouble(words[1]);
                 case "wait" -> {
                     condition = Condition.get(words);
                     if (condition.test(player)) {
@@ -171,7 +166,7 @@ public class Script {
                 }
                 case "yaw" -> ControlledInputHandler.moveToYaw = Float.parseFloat(words[1]);
                 case "pitch" -> ControlledInputHandler.moveToPitch = Float.parseFloat(words[1]);
-                case "lockRotation" -> ControlledInputHandler.lockRotation(player);
+                case "lockRotation" -> ControlledInputHandler.lockRotation();
                 // Continuous commands
                 default -> {
                     switch (words[1]) {

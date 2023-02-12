@@ -1,10 +1,9 @@
 package com.contrabass.controlled;
 
 import com.contrabass.controlled.handler.*;
-import com.contrabass.controlled.script.Script;
+import com.contrabass.controlled.script.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -12,6 +11,7 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +37,10 @@ public class ControlledClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ScriptRegisterCallback.EVENT.register(consumer -> {
+            consumer.accept(new BridgeScript());
+            consumer.accept(new UpwardBridgeScript());
+        });
         ControlledKeyBindings.init();
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override
@@ -59,9 +63,12 @@ public class ControlledClient implements ClientModInitializer {
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             ClientPlayerEntity player = client.player;
+            World world = client.world;
             assert player != null;
             ControlledKeyBindings.handleKeyBindings(player);
             Script.tick();
+            CodeScript.tick(world, player);
         });
+        CodeScript.registerScripts();
     }
 }

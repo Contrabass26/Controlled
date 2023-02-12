@@ -7,9 +7,6 @@ import java.util.function.Function;
 
 public interface Expression extends Function<PlayerEntity, String> {
 
-    /**
-     * @return [INDIRECT] A direction in String form
-     */
     static Expression backwardsDiagonal() {
         return player -> directionToString(Direction.fromRotation(player.getYaw() - 45).getOpposite());
     }

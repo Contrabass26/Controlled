@@ -105,8 +105,10 @@ public class ControlledInputHandler {
 
     public static void addInputModifier(InputModifier<?> modifier) {
         if (modifier instanceof InputModifier.Movement movementModifier) {
+            MOVEMENT_INPUT_MODIFIERS.removeIf(m -> m.equals(movementModifier));
             MOVEMENT_INPUT_MODIFIERS.add(movementModifier);
         } else if (modifier instanceof InputModifier.Key keyModifier) {
+            KEY_INPUT_MODIFIERS.removeIf(m -> m.equals(keyModifier));
             KEY_INPUT_MODIFIERS.add(keyModifier);
         } else {
             throw new IllegalArgumentException("Expected InputModifier.Key or InputModifier.Movement, got " + modifier.getClass());
@@ -118,7 +120,9 @@ public class ControlledInputHandler {
         KEY_INPUT_MODIFIERS.removeIf(m -> idPredicate.test(m.id));
     }
 
-    public static void lockRotation(PlayerEntity player) {
+    public static void lockRotation() {
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        assert player != null;
         float yaw = player.getYaw();
         float newYaw = Math.round(yaw / 45f) * 45f;
         player.setYaw(newYaw);

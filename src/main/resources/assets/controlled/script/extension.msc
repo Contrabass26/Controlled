@@ -3,7 +3,6 @@ w start
 sprint start
 jump start
 pitch 47
-wait distanceBackwards
 loop 8
 next
 pool
