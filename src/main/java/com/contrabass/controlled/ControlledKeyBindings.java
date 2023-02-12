@@ -42,7 +42,7 @@ public class ControlledKeyBindings {
         try {
             Script.get("shift_bridge").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
             Script.get("upward_bridge").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
-            Script.get("test").handleKeybind(TEST_SCRIPT_KEYBINDING.isPressed());
+            Script.get("extension").handleKeybind(TEST_SCRIPT_KEYBINDING.isPressed());
         } catch (NullPointerException e) {
             // Not an issue; scripts have not been initialised yet
         }

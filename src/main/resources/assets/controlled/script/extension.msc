@@ -1,10 +1,16 @@
+lockRotation
 w start
 sprint start
 jump start
-pitch 90
-loop 5
+pitch 47
+wait distanceBackwards
+loop 8
 next
 pool
+use
+next
+pitch 64
+next
 use
 next tail
 sprint stop
