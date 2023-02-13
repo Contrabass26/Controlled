@@ -4,7 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Direction;
 
-public class UpwardBridgeScript extends CodeScript {
+public class UpwardBridgeScript extends Script {
 
     private int counter = 0;
     private boolean breakout = false;

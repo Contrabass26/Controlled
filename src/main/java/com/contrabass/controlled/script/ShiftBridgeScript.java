@@ -2,7 +2,7 @@ package com.contrabass.controlled.script;
 
 import com.contrabass.controlled.util.ControlledUtils;
 
-public class BridgeScript extends CodeScript {
+public class ShiftBridgeScript extends Script {
 
     private boolean breakout = false;
 
@@ -33,7 +33,7 @@ public class BridgeScript extends CodeScript {
         return -1;
     };
 
-    public BridgeScript() {
+    public ShiftBridgeScript() {
         super();
     }
 

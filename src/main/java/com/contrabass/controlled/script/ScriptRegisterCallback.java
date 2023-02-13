@@ -14,5 +14,5 @@ public interface ScriptRegisterCallback {
                 }
             });
 
-    void fire(Consumer<CodeScript> consumer);
+    void fire(Consumer<Script> consumer);
 }
