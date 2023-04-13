@@ -4,15 +4,11 @@ import com.contrabass.controlled.ControlledClient;
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.script.Script;
 import com.contrabass.controlled.util.MathUtils;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.joml.Vector2d;
 
@@ -60,13 +56,6 @@ public abstract class ClutchHandler {
         }
     }
 
-    protected static boolean isTargetingBlock(MinecraftClient minecraft) {
-        if (minecraft.crosshairTarget instanceof BlockHitResult blockHitResult) {
-            return blockHitResult.getType() != HitResult.Type.MISS;
-        }
-        return false;
-    }
-
     protected static Vector2d targetCentre(PlayerEntity player) {
         return new Vector2d(
                 MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
@@ -90,17 +79,6 @@ public abstract class ClutchHandler {
             }
         }
         return -1;
-    }
-
-    protected static int getTopBlock(World world, BlockPos start) {
-        while (!world.getBlockState(start).isSolidBlock(world, start) && start.getY() != -64) {
-            start = start.down();
-        }
-        return start.getY();
-    }
-
-    protected static BlockPos getTopBlockPos(World world, BlockPos start) {
-        return new BlockPos(start.getX(), getTopBlock(world, start), start.getZ());
     }
 
     public static List<ItemStack> getHotbar(PlayerEntity player) {

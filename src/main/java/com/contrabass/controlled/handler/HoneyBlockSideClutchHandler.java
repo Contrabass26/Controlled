@@ -1,6 +1,7 @@
 package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledInputHandler;
+import com.contrabass.controlled.util.ControlledUtils;
 import com.contrabass.controlled.util.MathUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -36,10 +37,10 @@ public class HoneyBlockSideClutchHandler extends ClutchHandler {
         World world = player.world;
         // Find block to clutch on side of
         BlockPos playerPos = player.getBlockPos();
-        int landingY = getTopBlock(world, playerPos);
+        int landingY = ControlledUtils.getTopBlock(world, playerPos);
         for (Direction direction : Direction.Type.HORIZONTAL) {
             // Find top block for this x and z
-            int topY = getTopBlock(world, playerPos.offset(direction));
+            int topY = ControlledUtils.getTopBlock(world, playerPos.offset(direction));
             if (topY >= landingY) {
                 Vector2d start = new Vector2d(
                         MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),

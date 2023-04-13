@@ -1,6 +1,7 @@
 package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledInputHandler;
+import com.contrabass.controlled.util.ControlledUtils;
 import com.contrabass.controlled.util.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,11 +37,11 @@ public class LadderClutchHandler extends ClutchHandler {
     }
 
     private static Pair<Direction, Integer> getBestDirection(World world, BlockPos playerPos) {
-        int landingY = getTopBlock(world, playerPos);
+        int landingY = ControlledUtils.getTopBlock(world, playerPos);
         Pair<Direction, Integer> best = new Pair<>(null, Integer.MAX_VALUE);
         for (Direction direction : Direction.Type.HORIZONTAL) {
             // Find top block for this x and z
-            int topY = getTopBlock(world, playerPos.offset(direction));
+            int topY = ControlledUtils.getTopBlock(world, playerPos.offset(direction));
             int difference = topY - landingY;
             if (difference < best.getRight() && difference > 0) {
                 // Better target for ladder

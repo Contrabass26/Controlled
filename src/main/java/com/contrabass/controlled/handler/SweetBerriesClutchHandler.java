@@ -1,5 +1,6 @@
 package com.contrabass.controlled.handler;
 
+import com.contrabass.controlled.util.ControlledUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -30,7 +31,7 @@ public class SweetBerriesClutchHandler extends ClutchHandler {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
             if (stackInHand.isOf(Items.SWEET_BERRIES) && willClutchNext()) {
-                if (isTargetingBlock(MinecraftClient.getInstance())) {
+                if (ControlledUtils.isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     finishClutch();
                 } else {
@@ -45,7 +46,7 @@ public class SweetBerriesClutchHandler extends ClutchHandler {
     @Override
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
         if (getSlotToUse(player, hotbar) == -1) return 0;
-        if (!PLACEABLE.contains(world.getBlockState(getTopBlockPos(world, player.getBlockPos())).getBlock())) return 0;
+        if (!PLACEABLE.contains(world.getBlockState(ControlledUtils.getTopBlockPos(world, player.getBlockPos())).getBlock())) return 0;
         return 85;
     }
 

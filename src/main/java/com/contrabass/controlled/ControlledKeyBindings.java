@@ -17,7 +17,6 @@ public class ControlledKeyBindings {
     private static final KeyBinding LOCK_ROTATION_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.lock_rotation", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, KEYBIND_GROUP));
     private static final KeyBinding SHIFT_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.shift_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
     private static final KeyBinding UPWARD_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.upward_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
-    private static final KeyBinding TEST_SCRIPT_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.script", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, KEYBIND_GROUP));
 
     private ControlledKeyBindings() {}
 
@@ -43,7 +42,9 @@ public class ControlledKeyBindings {
             Script.get("ShiftBridgeScript").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
             Script.get("UpwardBridgeScript").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
         } catch (NullPointerException e) {
-            // Not an issue; scripts have not been initialised yet
+            if (Script.isRegistryFrozen()) {
+                throw e;
+            }
         }
     }
 }

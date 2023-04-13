@@ -1,6 +1,7 @@
 package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledInputHandler;
+import com.contrabass.controlled.util.ControlledUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,7 @@ public class ScaffoldingClutchHandler extends ClutchHandler {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
             if (stackInHand.isOf(Items.SCAFFOLDING) && willClutchNext()) {
-                if (isTargetingBlock(MinecraftClient.getInstance())) {
+                if (ControlledUtils.isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     finishClutch();
                     releaseShiftNext = true;
@@ -40,7 +41,7 @@ public class ScaffoldingClutchHandler extends ClutchHandler {
     @Override
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
         if (getSlotToUse(player, hotbar) == -1) return 0;
-        BlockPos topBlockPos = getTopBlockPos(world, player.getBlockPos());
+        BlockPos topBlockPos = ControlledUtils.getTopBlockPos(world, player.getBlockPos());
         if (!world.getBlockState(topBlockPos).isSolidBlock(world, topBlockPos)) return 0;
         // TODO: One block of scaffolding only breaks falls up to a certain height
         return 90;

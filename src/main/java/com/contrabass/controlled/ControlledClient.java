@@ -1,9 +1,9 @@
 package com.contrabass.controlled;
 
 import com.contrabass.controlled.handler.*;
-import com.contrabass.controlled.script.ShiftBridgeScript;
 import com.contrabass.controlled.script.Script;
 import com.contrabass.controlled.script.ScriptRegisterCallback;
+import com.contrabass.controlled.script.ShiftBridgeScript;
 import com.contrabass.controlled.script.UpwardBridgeScript;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

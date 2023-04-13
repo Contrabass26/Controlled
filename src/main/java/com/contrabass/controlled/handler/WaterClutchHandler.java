@@ -1,6 +1,7 @@
 package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledInputHandler;
+import com.contrabass.controlled.util.ControlledUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -19,7 +20,7 @@ public class WaterClutchHandler extends ClutchHandler {
     public void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
             if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && ClutchHandler.willClutchNext()) {
-                if (isTargetingBlock(MinecraftClient.getInstance())) {
+                if (ControlledUtils.isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     ClutchHandler.finishClutch();
                     justPlaced = true;
@@ -45,7 +46,7 @@ public class WaterClutchHandler extends ClutchHandler {
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
         if (getSlotToUse(player, hotbar) == -1) return 0;
         if (world.getDimensionKey() == DimensionTypes.THE_NETHER) return 0;
-        BlockPos topBlockPos = getTopBlockPos(world, player.getBlockPos());
+        BlockPos topBlockPos = ControlledUtils.getTopBlockPos(world, player.getBlockPos());
         if (world.getBlockState(topBlockPos).isSolidBlock(world, topBlockPos)) return 100;
         return 50;
     }

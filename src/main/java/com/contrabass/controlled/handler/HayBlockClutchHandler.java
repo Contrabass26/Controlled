@@ -1,5 +1,6 @@
 package com.contrabass.controlled.handler;
 
+import com.contrabass.controlled.util.ControlledUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,7 @@ public class HayBlockClutchHandler extends ClutchHandler {
         if (!player.isOnGround()) {
             ItemStack stackInHand = player.getStackInHand(player.getActiveHand());
             if (stackInHand.isOf(Items.HAY_BLOCK) && willClutchNext()) {
-                if (isTargetingBlock(MinecraftClient.getInstance())) {
+                if (ControlledUtils.isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
                     finishClutch();
                 } else {
@@ -30,7 +31,7 @@ public class HayBlockClutchHandler extends ClutchHandler {
     @Override
     public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
         if (getSlotToUse(player, hotbar) == -1) return 0;
-        float fallDistance = player.getBlockY() - getTopBlock(world, player.getBlockPos()) + player.fallDistance;
+        float fallDistance = player.getBlockY() - ControlledUtils.getTopBlock(world, player.getBlockPos()) + player.fallDistance;
         if (fallDistance > 103) return 0;
         return 45;
     }

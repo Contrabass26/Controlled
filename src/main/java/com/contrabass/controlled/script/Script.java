@@ -61,6 +61,10 @@ public abstract class Script {
         });
     }
 
+    public static boolean isRegistryFrozen() {
+        return registryFrozen;
+    }
+
     public static void stopAll() {
         scripts.values().forEach(Script::prepareStop);
     }
