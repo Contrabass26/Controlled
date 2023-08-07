@@ -30,7 +30,7 @@ public abstract class ClutchHandler {
 
     public static void doNextClutch() {
         doNextClutch = true;
-        Script.stopAll();
+        Script.stopAll(null);
     }
 
     public static boolean willClutchNext() {

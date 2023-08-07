@@ -38,13 +38,7 @@ public class ControlledKeyBindings {
         if (LOCK_ROTATION_KEYBINDING.isPressed()) {
             ControlledInputHandler.lockRotation();
         }
-        try {
-            Script.get("ShiftBridgeScript").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
-            Script.get("UpwardBridgeScript").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
-        } catch (NullPointerException e) {
-            if (Script.isRegistryFrozen()) {
-                throw e;
-            }
-        }
+        Script.get("ShiftBridgeScript").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
+        Script.get("UpwardBridgeScript").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
     }
 }

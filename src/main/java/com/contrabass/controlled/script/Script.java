@@ -4,6 +4,7 @@ import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.InputModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,8 +37,14 @@ public abstract class Script {
         if (!pressed && acceptedKeyPress) {
             acceptedKeyPress = false;
         } else if (pressed && !acceptedKeyPress) {
-            if (running) prepareStop();
-            else startScript();
+            if (running) {
+                System.out.println("Stopping script");
+                prepareStop();
+            } else {
+                System.out.println("Starting script");
+                Script.stopAll(this.modifierId);
+                startScript();
+            }
             acceptedKeyPress = true;
         }
     }
@@ -65,8 +72,8 @@ public abstract class Script {
         return registryFrozen;
     }
 
-    public static void stopAll() {
-        scripts.values().forEach(Script::prepareStop);
+    public static void stopAll(@Nullable String except) {
+        scripts.values().stream().filter(s -> s.running && !s.modifierId.equals(except)).forEach(Script::prepareStop);
     }
 
     // CHILD UTILITY METHODS //
