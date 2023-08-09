@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigString;
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 
@@ -19,10 +19,10 @@ public class Configs implements IConfigHandler {
 
     public static class Generic {
 
-        public static final ConfigString MESSAGE = new ConfigString("message", "I like cheese", "The message to display");
+        public static final ConfigBoolean ADJUST_CLUTCH_POSITION = new ConfigBoolean("adjustClutchPosition", true, "Whether to adjust the player's position\nwhile falling to avoid rough terrain");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                MESSAGE
+                ADJUST_CLUTCH_POSITION
         );
     }
 

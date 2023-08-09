@@ -1,6 +1,7 @@
 package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledInputHandler;
+import com.contrabass.controlled.config.Configs;
 import com.contrabass.controlled.util.ControlledUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +40,9 @@ public class WaterClutchHandler extends ClutchHandler {
 //            cachedTarget = targetCentre(player);
 //        }
 //        InputHandler.target = cachedTarget;
-        ControlledInputHandler.target = targetCentre(player);
+        if (Configs.Generic.ADJUST_CLUTCH_POSITION.getBooleanValue()) {
+            ControlledInputHandler.target = targetCentre(player);
+        }
     }
 
     @Override
