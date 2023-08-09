@@ -41,7 +41,7 @@ public class ControlledClient implements ClientModInitializer {
             ClientPlayerEntity player = client.player;
             World world = client.world;
             assert player != null;
-            ControlledKeyBindings.handleKeyBindings(player);
+            ControlledKeyBindings.handleKeyBindings();
             Script.tick(world, player);
         });
         Script.registerScripts();

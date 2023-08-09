@@ -22,6 +22,7 @@ public class ControlledInputHandler {
     public static Boolean shift = null;
     public static Boolean jump = null;
     public static int doNextRightClick = 0;
+    public static boolean fastRightClick = false;
     public static int doNextLeftClick = 0;
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
@@ -67,7 +68,7 @@ public class ControlledInputHandler {
         for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
             handler.handle(player, itemUse);
         }
-        if (doNextRightClick > 0) {
+        if (doNextRightClick > 0 || fastRightClick) {
             itemUse.run();
             if (doNextRightClick == 1) doNextRightClick = 0;
         }

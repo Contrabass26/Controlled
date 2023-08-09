@@ -5,9 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "InputEventMixin",
-    "KeyboardInputMixin",
+    "KeyboardInputMixin"
   ],
   "client": [
+    "MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

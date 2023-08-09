@@ -1,5 +1,6 @@
 package com.contrabass.controlled;
 
+import fi.dy.masa.malilib.event.InitializationHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -27,5 +28,7 @@ public class ControlledInit implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "builder_block"), new BlockItem(BUILDER_BLOCK, new FabricItemSettings()));
 
 		ServerTickEvents.END_SERVER_TICK.register(server -> BuilderBlock.onServerTick());
+
+		InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
 	}
 }
