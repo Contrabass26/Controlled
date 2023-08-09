@@ -38,10 +38,8 @@ public abstract class Script {
             acceptedKeyPress = false;
         } else if (pressed && !acceptedKeyPress) {
             if (running) {
-                System.out.println("Stopping script");
                 prepareStop();
             } else {
-                System.out.println("Starting script");
                 Script.stopAll(this.modifierId);
                 startScript();
             }
