@@ -27,7 +27,6 @@ public class ControlledKeyBindings {
             ControlledInputHandler.doNextLeftClick = 1;
         }
         if (CONFIG_OPEN.wasPressed()) {
-            ControlledInit.LOGGER.info("Opening Controlled config");
             GuiBase.openGui(new GuiConfigs());
         }
         Script.get("ShiftBridgeScript").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
