@@ -26,5 +26,10 @@ public class Callbacks {
             ControlledInputHandler.fastRightClick = (action == KeyAction.PRESS);
             return true;
         }));
+
+        Hotkeys.FAST_LEFT_CLICK.getKeybind().setCallback(((action, key) -> {
+            ControlledInputHandler.fastLeftClick = (action == KeyAction.PRESS);
+            return true;
+        }));
     }
 }

@@ -23,6 +23,7 @@ public class ControlledInputHandler {
     public static Boolean jump = null;
     public static int doNextRightClick = 0;
     public static boolean fastRightClick = false;
+    public static boolean fastLeftClick = false;
     public static int doNextLeftClick = 0;
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
@@ -72,7 +73,7 @@ public class ControlledInputHandler {
             itemUse.run();
             if (doNextRightClick == 1) doNextRightClick = 0;
         }
-        if (doNextLeftClick > 0) {
+        if (doNextLeftClick > 0 || fastLeftClick) {
             attack.run();
             if (doNextLeftClick == 1) doNextLeftClick = 0;
         }

@@ -11,7 +11,6 @@ import org.lwjgl.glfw.GLFW;
 public class ControlledKeyBindings {
 
     private static final String KEYBIND_GROUP = "category.controlled.controlled";
-    private static final KeyBinding FAST_LEFT_CLICK_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.fast_left_click", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_I, KEYBIND_GROUP));
     private static final KeyBinding SHIFT_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.shift_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
     private static final KeyBinding UPWARD_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.upward_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
     private static final KeyBinding CONFIG_OPEN = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.config", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, KEYBIND_GROUP));
@@ -23,9 +22,6 @@ public class ControlledKeyBindings {
     }
 
     public static void handleKeyBindings() {
-        if (FAST_LEFT_CLICK_KEYBINDING.isPressed()) {
-            ControlledInputHandler.doNextLeftClick = 1;
-        }
         if (CONFIG_OPEN.wasPressed()) {
             GuiBase.openGui(new GuiConfigs());
         }
