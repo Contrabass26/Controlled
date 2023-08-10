@@ -38,6 +38,12 @@ public class ShiftBridgeScript extends Script {
     }
 
     @Override
+    protected void start(String key) {
+        super.start(key);
+        breakout = false;
+    }
+
+    @Override
     protected Task getTask(int index) {
         return switch (index) {
             case 0 -> START;
