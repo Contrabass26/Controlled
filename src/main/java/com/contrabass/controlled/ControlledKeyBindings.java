@@ -11,8 +11,6 @@ import org.lwjgl.glfw.GLFW;
 public class ControlledKeyBindings {
 
     private static final String KEYBIND_GROUP = "category.controlled.controlled";
-    private static final KeyBinding SHIFT_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.shift_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
-    private static final KeyBinding UPWARD_BRIDGE_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.upward_bridge", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEYBIND_GROUP));
     private static final KeyBinding CONFIG_OPEN = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.controlled.config", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, KEYBIND_GROUP));
 
     private ControlledKeyBindings() {}
@@ -25,7 +23,5 @@ public class ControlledKeyBindings {
         if (CONFIG_OPEN.wasPressed()) {
             GuiBase.openGui(new GuiConfigs());
         }
-        Script.get("ShiftBridgeScript").handleKeybind(SHIFT_BRIDGE_KEYBINDING.isPressed());
-        Script.get("UpwardBridgeScript").handleKeybind(UPWARD_BRIDGE_KEYBINDING.isPressed());
     }
 }

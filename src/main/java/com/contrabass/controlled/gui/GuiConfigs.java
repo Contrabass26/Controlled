@@ -55,7 +55,7 @@ public final class GuiConfigs extends GuiConfigsBase {
         ConfigGuiTab tab = GuiConfigs.tab;
         List<? extends IConfigBase> configs = switch (tab) {
             case GENERIC -> Configs.Generic.OPTIONS;
-            case GENERIC_HOTKEYS -> Hotkeys.HOTKEY_LIST;
+            case GENERIC_HOTKEYS -> Hotkeys.getHotkeys();
         };
         return ConfigOptionWrapper.createFor(configs);
     }

@@ -1,7 +1,9 @@
 package com.contrabass.controlled.script;
 
+import com.contrabass.controlled.ControlledInit;
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.InputModifier;
+import com.contrabass.controlled.config.Hotkeys;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +21,6 @@ public abstract class Script {
     private final String modifierId;
     private int next = 0;
     private boolean running = false;
-    private boolean acceptedKeyPress = false;
 
     protected Script() {
         modifierId = this.getClass().getSimpleName();
@@ -33,23 +34,24 @@ public abstract class Script {
 
     // PUBLIC METHODS //
 
-    public void handleKeybind(boolean pressed) {
-        if (!pressed && acceptedKeyPress) {
-            acceptedKeyPress = false;
-        } else if (pressed && !acceptedKeyPress) {
-            if (running) {
-                prepareStop();
-            } else {
-                Script.stopAll(this.modifierId);
-                startScript();
-            }
-            acceptedKeyPress = true;
+    public void toggle() {
+        if (running) {
+            prepareStop();
+        } else {
+            Script.stopAllExcept(this.modifierId);
+            startScript();
         }
     }
 
     public static void registerScripts() {
         if (!registryFrozen) {
-            ScriptRegisterCallback.EVENT.invoker().fire(script -> scripts.put(script.getClass().getSimpleName(), script));
+            ControlledInit.LOGGER.info("Registering scripts");
+            Hotkeys.clearScripts();
+            ScriptRegisterCallback.EVENT.invoker().fire(script -> {
+                String name = script.getClass().getSimpleName();
+                scripts.put(name, script);
+                Hotkeys.registerScript(name);
+            });
             registryFrozen = true;
         }
     }
@@ -70,7 +72,7 @@ public abstract class Script {
         return registryFrozen;
     }
 
-    public static void stopAll(@Nullable String except) {
+    public static void stopAllExcept(@Nullable String except) {
         scripts.values().stream().filter(s -> s.running && !s.modifierId.equals(except)).forEach(Script::prepareStop);
     }
 

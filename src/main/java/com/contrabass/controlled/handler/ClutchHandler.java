@@ -2,7 +2,6 @@ package com.contrabass.controlled.handler;
 
 import com.contrabass.controlled.ControlledClient;
 import com.contrabass.controlled.ControlledInputHandler;
-import com.contrabass.controlled.config.Configs;
 import com.contrabass.controlled.script.Script;
 import com.contrabass.controlled.util.MathUtils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +30,7 @@ public abstract class ClutchHandler {
 
     public static void doNextClutch() {
         doNextClutch = true;
-        Script.stopAll(null);
+        Script.stopAllExcept(null);
     }
 
     public static boolean willClutchNext() {

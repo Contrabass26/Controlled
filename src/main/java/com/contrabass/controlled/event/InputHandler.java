@@ -18,13 +18,13 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
 
     @Override
     public void addKeysToMap(IKeybindManager manager) {
-        for (IHotkey hotkey : Hotkeys.HOTKEY_LIST) {
+        for (IHotkey hotkey : Hotkeys.getHotkeys()) {
             manager.addKeybindToMap(hotkey.getKeybind());
         }
     }
 
     @Override
     public void addHotkeys(IKeybindManager manager) {
-        manager.addHotkeysForCategory(ControlledInit.MOD_ID, "controlled.hotkeys.category.generic_hotkeys", Hotkeys.HOTKEY_LIST);
+        manager.addHotkeysForCategory(ControlledInit.MOD_ID, "controlled.hotkeys.category.generic_hotkeys", Hotkeys.getHotkeys());
     }
 }
