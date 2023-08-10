@@ -1,32 +1,84 @@
 package com.contrabass.controlled.handler;
 
+import com.contrabass.controlled.ControlledInit;
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.config.Configs;
+import com.contrabass.controlled.script.Script;
 import com.contrabass.controlled.util.ControlledUtils;
+import com.contrabass.controlled.util.MathUtils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionTypes;
+import net.minecraft.world.dimension.DimensionType;
+import org.joml.Vector2d;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class WaterClutchHandler extends ClutchHandler {
+public class WaterClutchHandler {
 
-    private boolean justPlaced = false;
-//    private Vector2d cachedTarget = null;
+    private static boolean doNextClutch = false;
+    private static boolean justPlaced = false;
+    public static BlockPos target = null;
 
-    public void handle(PlayerEntity player, Runnable useItem) {
+    private WaterClutchHandler() {}
+
+    public static void doNextClutch() {
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        assert player != null;
+        World world = player.world;
+        if (world.getDimension().ultrawarm()) return; // Nether-like dimensions - water won't work
+        List<ItemStack> hotbar = IntStream.range(0, 9).mapToObj(player.getInventory()::getStack).collect(Collectors.toList());
+        int slotToUse = getSlotToUse(hotbar);
+        if (slotToUse == -1) return; // No water bucket in hotbar
+        ControlledInputHandler.switchToSlot = slotToUse;
+        doNextClutch = true;
+        Script.stopAllExcept(null);
+        // Do targeting
+//        double a = 22.19;
+        double a = 30;
+        BlockPos topBlockPos = ControlledUtils.getTopBlockPos(world, player.getBlockPos());
+        double s = player.getY() - topBlockPos.getY();
+        double t = Math.sqrt(2d * s / a) * 20;
+        Vec3d projected = player.getPos().add(player.getVelocity().multiply(t));
+        target = new BlockPos(projected.x, topBlockPos.getY(), projected.z);
+        ControlledInputHandler.target = new Vector2d(
+                MathUtils.addPlusMinus(MathUtils.roundToZero(projected.x, 1), 0.5),
+                MathUtils.addPlusMinus(MathUtils.roundToZero(projected.z, 1), 0.5)
+        );
+    }
+
+    public static boolean willClutchNext() {
+        return doNextClutch;
+    }
+
+    protected static void finishClutch() {
+        doNextClutch = false;
+        ControlledInputHandler.target = null;
+    }
+
+    protected static Vector2d targetCentre(PlayerEntity player) {
+        return new Vector2d(
+                MathUtils.addPlusMinus(MathUtils.roundToZero(player.getX(), 1), 0.5),
+                MathUtils.addPlusMinus(MathUtils.roundToZero(player.getZ(), 1), 0.5)
+        );
+    }
+
+    public static void handle(PlayerEntity player, Runnable useItem) {
         if (!player.isOnGround()) {
-            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && ClutchHandler.willClutchNext()) {
+            if (player.getStackInHand(player.getActiveHand()).getItem() == Items.WATER_BUCKET && WaterClutchHandler.willClutchNext()) {
                 if (ControlledUtils.isTargetingBlock(MinecraftClient.getInstance())) {
                     useItem.run();
-                    ClutchHandler.finishClutch();
+                    WaterClutchHandler.finishClutch();
                     justPlaced = true;
-                } else {
-                    doTargeting(player);
+                } else if (Configs.Generic.ADJUST_CLUTCH_POSITION.getBooleanValue()) {
+//                    ControlledInputHandler.target = targetCentre(player);
                 }
             }
         } else if (justPlaced) {
@@ -35,32 +87,12 @@ public class WaterClutchHandler extends ClutchHandler {
         }
     }
 
-    private void doTargeting(PlayerEntity player) {
-//        if (cachedTarget == null) {
-//            cachedTarget = targetCentre(player);
-//        }
-//        InputHandler.target = cachedTarget;
-        if (Configs.Generic.ADJUST_CLUTCH_POSITION.getBooleanValue()) {
-            ControlledInputHandler.target = targetCentre(player);
+    public static int getSlotToUse(List<ItemStack> hotbar) {
+        for (int i = 0; i < hotbar.size(); i++) {
+            if (hotbar.get(i).isOf(Items.WATER_BUCKET)) {
+                return i;
+            }
         }
+        return -1;
     }
-
-    @Override
-    public int getScore(World world, PlayerEntity player, List<ItemStack> hotbar) {
-        if (getSlotToUse(player, hotbar) == -1) return 0;
-        if (world.getDimensionKey() == DimensionTypes.THE_NETHER) return 0;
-        BlockPos topBlockPos = ControlledUtils.getTopBlockPos(world, player.getBlockPos());
-        if (world.getBlockState(topBlockPos).isSolidBlock(world, topBlockPos)) return 100;
-        return 50;
-    }
-
-    @Override
-    public int getSlotToUse(PlayerEntity player, List<ItemStack> hotbar) {
-        return findSlotFor(hotbar, Items.WATER_BUCKET);
-    }
-
-//    @Override
-//    protected void clearCaches() {
-//        cachedTarget = null;
-//    }
 }

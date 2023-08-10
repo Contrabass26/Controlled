@@ -1,6 +1,6 @@
 package com.contrabass.controlled;
 
-import com.contrabass.controlled.handler.ClutchHandler;
+import com.contrabass.controlled.handler.WaterClutchHandler;
 import com.contrabass.controlled.util.MathUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
@@ -32,7 +32,6 @@ public class ControlledInputHandler {
     private ControlledInputHandler() {}
 
     private static void reset() {
-        target = null;
         jump = null;
         shift = null;
     }
@@ -43,7 +42,7 @@ public class ControlledInputHandler {
         assert player != null;
         if (target != null) {
             Vector2d current = MathUtils.flatten(player.getPos());
-            boolean[] keys = MathUtils.getKeysFor(current, target, player.getYaw());
+            boolean[] keys = MathUtils.getKeysFor(current, target, player.getYaw() % 360);
             keyboardInput.pressingForward = keys[0];
             keyboardInput.pressingRight = keys[1];
             keyboardInput.pressingBack = keys[2];
@@ -66,9 +65,7 @@ public class ControlledInputHandler {
     }
 
     public static void handleInputEvents(Runnable itemUse, Runnable attack, PlayerEntity player, MinecraftClient client, GameOptions options) {
-        for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
-            handler.handle(player, itemUse);
-        }
+        WaterClutchHandler.handle(player, itemUse);
         if (doNextRightClick > 0 || fastRightClick) {
             itemUse.run();
             if (doNextRightClick == 1) doNextRightClick = 0;

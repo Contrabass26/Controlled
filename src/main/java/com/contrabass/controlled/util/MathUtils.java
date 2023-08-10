@@ -30,7 +30,8 @@ public class MathUtils {
     }
 
     public static boolean[] getKeysFor(Vector2d initial, Vector2d finish, float yaw) {
-        return directionToKeys(finish.sub(initial), yaw);
+        Vector2d finishCopy = new Vector2d(finish);
+        return directionToKeys(finishCopy.sub(initial), yaw);
     }
 
     public static Vector2d rotate(Vector2d v, float angle) {

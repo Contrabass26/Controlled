@@ -2,7 +2,7 @@ package com.contrabass.controlled.config;
 
 import com.contrabass.controlled.ControlledInit;
 import com.contrabass.controlled.ControlledInputHandler;
-import com.contrabass.controlled.handler.ClutchHandler;
+import com.contrabass.controlled.handler.WaterClutchHandler;
 import com.contrabass.controlled.script.Script;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
@@ -16,8 +16,7 @@ public class Callbacks {
         ControlledInit.LOGGER.info("Initialising callbacks");
 
         Hotkeys.DO_CLUTCH.getKeybind().setCallback((action, key) -> {
-            ClutchHandler.doNextClutch();
-            ClutchHandler.switchToBestSlot(MinecraftClient.getInstance().player);
+            WaterClutchHandler.doNextClutch();
             return true;
         });
 
