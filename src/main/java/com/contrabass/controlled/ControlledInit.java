@@ -27,6 +27,10 @@ public class ControlledInit implements ModInitializer {
 
 		ServerTickEvents.END_SERVER_TICK.register(server -> BuilderBlock.onServerTick());
 
-		InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
+		try {
+			InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
+		} catch (Exception e) {
+			LOGGER.info("Failed to initialise Malilib - " + e.getClass().getSimpleName());
+		}
 	}
 }
