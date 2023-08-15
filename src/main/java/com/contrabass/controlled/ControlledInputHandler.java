@@ -30,8 +30,10 @@ public class ControlledInputHandler {
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
     public static Float moveToPitch = null;
-    public static int clickCounter = 1;
-    public static float clickThreshold = 1f;
+    public static int fastClickCounter = 1;
+    public static float fastClickThreshold = 1f;
+    public static float fastClickShakeIntensity = 0f;
+    public static float fastClickShakeChance = 1f;
 
     private ControlledInputHandler() {}
 
@@ -74,28 +76,28 @@ public class ControlledInputHandler {
             handler.handle(player, itemUse);
         }
         if (fastRightClick) {
-            float diff = clickThreshold - clickCounter;
+            float diff = fastClickThreshold - fastClickCounter;
             if (diff < 0 || RANDOM.nextFloat() > diff) {
-                clickCounter = 0;
+                fastClickCounter = 0;
                 itemUse.run();
             }
-            clickCounter++;
+            fastClickCounter++;
         } else {
-            clickCounter = (int) clickThreshold;
+            fastClickCounter = (int) fastClickThreshold;
         }
         if (doNextRightClick > 0) {
             itemUse.run();
             doNextRightClick = 0;
         }
         if (fastLeftClick) {
-            float diff = clickThreshold - clickCounter;
+            float diff = fastClickThreshold - fastClickCounter;
             if (diff < 0 || RANDOM.nextFloat() > diff) {
-                clickCounter = 0;
+                fastClickCounter = 0;
                 attack.run();
             }
-            clickCounter++;
+            fastClickCounter++;
         } else {
-            clickCounter = (int) clickThreshold;
+            fastClickCounter = (int) fastClickThreshold;
         }
         if (doNextLeftClick > 0) {
             attack.run();
@@ -115,6 +117,17 @@ public class ControlledInputHandler {
                 player.getInventory().selectedSlot = switchToSlot;
             }
             switchToSlot = null;
+        }
+        // Shaking for fast click
+        if ((fastLeftClick || fastRightClick) && fastClickShakeIntensity != 0) {
+            if (RANDOM.nextFloat() < fastClickShakeChance) {
+                float yaw = player.getYaw();
+                float pitch = player.getPitch();
+                yaw += RANDOM.nextFloat(fastClickShakeIntensity * 2) - fastClickShakeIntensity;
+                pitch += RANDOM.nextFloat(fastClickShakeIntensity * 2) - fastClickShakeIntensity;
+                player.setYaw(yaw);
+                player.setPitch(pitch);
+            }
         }
         // Input modifiers
         KEY_INPUT_MODIFIERS.sort(InputModifier::compareTo);
