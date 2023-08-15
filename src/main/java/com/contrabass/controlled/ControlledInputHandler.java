@@ -11,12 +11,14 @@ import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 public class ControlledInputHandler {
 
     private static final List<InputModifier.Movement> MOVEMENT_INPUT_MODIFIERS = new ArrayList<>();
     private static final List<InputModifier.Key> KEY_INPUT_MODIFIERS = new ArrayList<>();
+    private static final Random RANDOM = new Random();
 
     public static Vector2d target = null;
     public static Boolean shift = null;
@@ -28,6 +30,8 @@ public class ControlledInputHandler {
     public static Integer switchToSlot = null;
     public static Float moveToYaw = null;
     public static Float moveToPitch = null;
+    public static int clickCounter = 1;
+    public static float clickThreshold = 1f;
 
     private ControlledInputHandler() {}
 
@@ -69,13 +73,33 @@ public class ControlledInputHandler {
         for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
             handler.handle(player, itemUse);
         }
-        if (doNextRightClick > 0 || fastRightClick) {
-            itemUse.run();
-            if (doNextRightClick == 1) doNextRightClick = 0;
+        if (fastRightClick) {
+            float diff = clickThreshold - clickCounter;
+            if (diff < 0 || RANDOM.nextFloat() > diff) {
+                clickCounter = 0;
+                itemUse.run();
+            }
+            clickCounter++;
+        } else {
+            clickCounter = (int) clickThreshold;
         }
-        if (doNextLeftClick > 0 || fastLeftClick) {
+        if (doNextRightClick > 0) {
+            itemUse.run();
+            doNextRightClick = 0;
+        }
+        if (fastLeftClick) {
+            float diff = clickThreshold - clickCounter;
+            if (diff < 0 || RANDOM.nextFloat() > diff) {
+                clickCounter = 0;
+                attack.run();
+            }
+            clickCounter++;
+        } else {
+            clickCounter = (int) clickThreshold;
+        }
+        if (doNextLeftClick > 0) {
             attack.run();
-            if (doNextLeftClick == 1) doNextLeftClick = 0;
+            doNextLeftClick = 0;
         }
         if (moveToYaw != null) {
             player.setYaw(moveToYaw);
