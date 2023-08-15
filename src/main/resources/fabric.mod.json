@@ -15,16 +15,13 @@
 
   "license": "CC0-1.0",
   "icon": "assets/modid/icon.png",
-  "accessWidener": "controlled.accesswidener",
 
   "environment": "*",
   "entrypoints": {
     "main": [
       "com.contrabass.controlled.ControlledInit"
     ],
-    "client": [
-      "com.contrabass.controlled.ControlledClient"
-    ]
+    "client": []
   },
   "mixins": [
     "controlled.mixins.json"

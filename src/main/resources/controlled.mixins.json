@@ -3,13 +3,8 @@
   "minVersion": "0.8",
   "package": "com.contrabass.controlled.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-  ],
-  "client": [
-    "InputEventMixin",
-    "KeyboardInputMixin",
-    "MouseHandlerMixin"
-  ],
+  "mixins": [],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }
