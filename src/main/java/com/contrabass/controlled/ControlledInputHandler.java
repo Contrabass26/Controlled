@@ -7,6 +7,9 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.joml.Vector2d;
 
 import java.util.ArrayList;
@@ -34,7 +37,8 @@ public class ControlledInputHandler {
     public static float fastClickThreshold = 1f;
     public static float fastClickShakeIntensity = 0f;
     public static float fastClickShakeChance = 1f;
-    public static boolean recordMovement = false;
+    public static boolean pathfind = false;
+    public static BlockPos pathfindingTarget = null;
 
     private ControlledInputHandler() {}
 
@@ -73,7 +77,7 @@ public class ControlledInputHandler {
     }
 
     public static void handleInputEvents(Runnable itemUse, Runnable attack, PlayerEntity player, MinecraftClient client, GameOptions options) {
-        for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
+        for (ClutchHandler handler : ControlledClient.CLUTCH_HANDLERS) {
             handler.handle(player, itemUse);
         }
         if (fastRightClick) {
@@ -166,5 +170,21 @@ public class ControlledInputHandler {
         float yaw = player.getYaw();
         float newYaw = Math.round(yaw / 45f) * 45f;
         player.setYaw(newYaw);
+    }
+
+    public static void setPathfindingTarget() {
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        assert player != null;
+        World world = player.getWorld();
+        Vec3d direction = player.getRotationVector().normalize();
+        Vec3d pos = player.getEyePos();
+        for (int i = 0; i < 50; i++) {
+            pos = pos.add(direction);
+            BlockPos blockPos = new BlockPos((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+            if (world.getBlockState(blockPos).isSolidBlock(world, blockPos)) {
+                ControlledInputHandler.pathfindingTarget = blockPos;
+                break;
+            }
+        }
     }
 }

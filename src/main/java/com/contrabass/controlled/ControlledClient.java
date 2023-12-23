@@ -15,19 +15,19 @@ import java.util.List;
 
 public class ControlledClient implements ClientModInitializer {
 
-    public static final List<ClutchHandler> MLG_HANDLERS;
+    public static final List<ClutchHandler> CLUTCH_HANDLERS;
     static {
-        MLG_HANDLERS = new ArrayList<>();
-        MLG_HANDLERS.add(new BoatClutchHandler());
-        MLG_HANDLERS.add(new HayBlockClutchHandler());
-        MLG_HANDLERS.add(new HoneyBlockClutchHandler());
-        MLG_HANDLERS.add(new HoneyBlockSideClutchHandler());
-        MLG_HANDLERS.add(new LadderClutchHandler());
-        MLG_HANDLERS.add(new ScaffoldingClutchHandler());
-        MLG_HANDLERS.add(new SlimeBlockClutchHandler());
-        MLG_HANDLERS.add(new SweetBerriesClutchHandler());
-        MLG_HANDLERS.add(new TwistingVinesClutchHandler());
-        MLG_HANDLERS.add(new WaterClutchHandler());
+        CLUTCH_HANDLERS = new ArrayList<>();
+        CLUTCH_HANDLERS.add(new BoatClutchHandler());
+        CLUTCH_HANDLERS.add(new HayBlockClutchHandler());
+        CLUTCH_HANDLERS.add(new HoneyBlockClutchHandler());
+        CLUTCH_HANDLERS.add(new HoneyBlockSideClutchHandler());
+        CLUTCH_HANDLERS.add(new LadderClutchHandler());
+        CLUTCH_HANDLERS.add(new ScaffoldingClutchHandler());
+        CLUTCH_HANDLERS.add(new SlimeBlockClutchHandler());
+        CLUTCH_HANDLERS.add(new SweetBerriesClutchHandler());
+        CLUTCH_HANDLERS.add(new TwistingVinesClutchHandler());
+        CLUTCH_HANDLERS.add(new WaterClutchHandler());
     }
 
     @Override

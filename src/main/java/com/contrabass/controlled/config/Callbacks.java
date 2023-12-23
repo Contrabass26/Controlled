@@ -8,7 +8,6 @@ import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fi.dy.masa.malilib.util.InfoUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
 
 import java.util.Map;
 
@@ -38,9 +37,10 @@ public class Callbacks {
             return true;
         });
 
-        Hotkeys.RECORD_MOVEMENT.getKeybind().setCallback((action, key) -> {
-            ControlledInputHandler.recordMovement = !ControlledInputHandler.recordMovement;
-            InfoUtils.printBooleanConfigToggleMessage("Movement Recording", ControlledInputHandler.recordMovement);
+        Hotkeys.PATHFIND.getKeybind().setCallback((action, key) -> {
+            ControlledInputHandler.pathfind = !ControlledInputHandler.pathfind;
+            InfoUtils.printBooleanConfigToggleMessage("Pathfinding", ControlledInputHandler.pathfind);
+            ControlledInputHandler.setPathfindingTarget();
             return true;
         });
 
