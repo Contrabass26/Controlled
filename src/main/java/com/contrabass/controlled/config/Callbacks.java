@@ -6,7 +6,9 @@ import com.contrabass.controlled.handler.ClutchHandler;
 import com.contrabass.controlled.script.Script;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
+import fi.dy.masa.malilib.util.InfoUtils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 
 import java.util.Map;
 
@@ -21,26 +23,32 @@ public class Callbacks {
             return true;
         });
 
-        Hotkeys.LOCK_ROTATION.getKeybind().setCallback(((action, key) -> {
+        Hotkeys.LOCK_ROTATION.getKeybind().setCallback((action, key) -> {
             ControlledInputHandler.lockRotation();
             return true;
-        }));
+        });
 
-        Hotkeys.FAST_RIGHT_CLICK.getKeybind().setCallback(((action, key) -> {
+        Hotkeys.FAST_RIGHT_CLICK.getKeybind().setCallback((action, key) -> {
             ControlledInputHandler.fastRightClick = (action == KeyAction.PRESS);
             return true;
-        }));
+        });
 
-        Hotkeys.FAST_LEFT_CLICK.getKeybind().setCallback(((action, key) -> {
+        Hotkeys.FAST_LEFT_CLICK.getKeybind().setCallback((action, key) -> {
             ControlledInputHandler.fastLeftClick = (action == KeyAction.PRESS);
             return true;
-        }));
+        });
+
+        Hotkeys.RECORD_MOVEMENT.getKeybind().setCallback((action, key) -> {
+            ControlledInputHandler.recordMovement = !ControlledInputHandler.recordMovement;
+            InfoUtils.printBooleanConfigToggleMessage("Movement Recording", ControlledInputHandler.recordMovement);
+            return true;
+        });
 
         for (Map.Entry<String, ConfigHotkey> entry : Hotkeys.SCRIPT_HOTKEYS.entrySet()) {
-            entry.getValue().getKeybind().setCallback(((action, key) -> {
+            entry.getValue().getKeybind().setCallback((action, key) -> {
                 Script.get(entry.getKey()).toggle();
                 return true;
-            }));
+            });
         }
     }
 }

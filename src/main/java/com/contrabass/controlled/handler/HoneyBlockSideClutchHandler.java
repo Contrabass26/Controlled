@@ -34,7 +34,7 @@ public class HoneyBlockSideClutchHandler extends ClutchHandler {
     }
 
     private static void adjustPos(PlayerEntity player) {
-        World world = player.world;
+        World world = player.getWorld();
         // Find block to clutch on side of
         BlockPos playerPos = player.getBlockPos();
         int landingY = ControlledUtils.getTopBlock(world, playerPos);

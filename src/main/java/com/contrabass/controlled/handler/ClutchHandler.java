@@ -46,7 +46,7 @@ public abstract class ClutchHandler {
         List<ItemStack> hotbar = getHotbar(player);
         Pair<ClutchHandler, Integer> best = new Pair<>(null, 0);
         for (ClutchHandler handler : ControlledClient.MLG_HANDLERS) {
-            int score = handler.getScore(player.world, player, hotbar);
+            int score = handler.getScore(player.getWorld(), player, hotbar);
             if (score > best.getRight()) {
                 best = new Pair<>(handler, score);
             }

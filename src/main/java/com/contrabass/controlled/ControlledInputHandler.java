@@ -34,6 +34,7 @@ public class ControlledInputHandler {
     public static float fastClickThreshold = 1f;
     public static float fastClickShakeIntensity = 0f;
     public static float fastClickShakeChance = 1f;
+    public static boolean recordMovement = false;
 
     private ControlledInputHandler() {}
 
