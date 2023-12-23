@@ -1,10 +1,7 @@
 package com.contrabass.controlled;
 
 import com.contrabass.controlled.handler.*;
-import com.contrabass.controlled.script.Script;
-import com.contrabass.controlled.script.ScriptRegisterCallback;
-import com.contrabass.controlled.script.ShiftBridgeScript;
-import com.contrabass.controlled.script.UpwardBridgeScript;
+import com.contrabass.controlled.script.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -35,6 +32,7 @@ public class ControlledClient implements ClientModInitializer {
         ScriptRegisterCallback.EVENT.register(consumer -> {
             consumer.accept(new ShiftBridgeScript());
             consumer.accept(new UpwardBridgeScript());
+            consumer.accept(new PathfindingScript());
         });
         ControlledKeyBindings.init();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

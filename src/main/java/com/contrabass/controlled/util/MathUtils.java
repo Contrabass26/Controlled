@@ -113,4 +113,8 @@ public class MathUtils {
     public static double normalise(double d, double max) {
         return d < 0 ? (d + max) : d;
     }
+
+    public static int dot(Vec3i a, Vec3i b) {
+        return a.getX() * b.getX() + a.getY() * b.getY() + a.getZ() * b.getZ();
+    }
 }
