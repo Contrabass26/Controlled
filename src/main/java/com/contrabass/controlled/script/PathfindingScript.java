@@ -3,22 +3,22 @@ package com.contrabass.controlled.script;
 import com.contrabass.controlled.ControlledInit;
 import com.contrabass.controlled.ControlledInputHandler;
 import com.contrabass.controlled.util.MathUtils;
+import com.google.common.collect.Comparators;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PathfindingScript extends Script {
 
     private boolean stop = false;
-    private List<Step> steps = new ArrayList<>();
+    private Path path = new Path();
     private BlockPos start = null;
     private BlockPos end = null;
-    private List<BlockPos> visited = new ArrayList<>();
     private boolean starting = true;
 
     private int end(World world, PlayerEntity player, int current) {
@@ -35,14 +35,15 @@ public class PathfindingScript extends Script {
         return world.isTopSolid(pos, player) && !world.getBlockState(up1).isSolidBlock(world, up1) && !world.getBlockState(up2).isSolidBlock(world, up2);
     }
 
-    private void explore(BlockPos pos, List<Step> steps, World world, PlayerEntity player) { // -x, +z; -126, 89, -455
+    private void explore(BlockPos pos, Path path, World world, PlayerEntity player, Set<BlockPos> visited) {
         visited.add(pos);
         if (pos.equals(end)) {
-            this.steps = new ArrayList<>(steps);
-            ControlledInit.LOGGER.info("Found better path!");
+            this.path = new Path(comparePaths(this.path, path));
+            ControlledInit.LOGGER.info("Found path!");
             return;
         }
-        if (steps.size() > this.steps.size() && this.steps.size() != 0) {
+        if (path.length() > 25) return;
+        if (path.length() > this.path.length() && this.path.length() != 0) {
 //            ControlledInit.LOGGER.info("Rejected branch due to length");
             return;
         }
@@ -52,9 +53,9 @@ public class PathfindingScript extends Script {
         Direction xBad = xGood == null ? null : xGood.getOpposite();
         Direction zBad = zGood == null ? null : zGood.getOpposite();
         Direction[] directions = Math.abs(difference.getX()) > Math.abs(difference.getZ()) ? new Direction[]{xGood, zGood, zBad, xBad} : new Direction[]{zGood, xGood, xBad, zBad};
-        List<Step> newSteps = new ArrayList<>(steps);
+        Path newSteps = new Path(path);
         newSteps.add(null);
-        int last = steps.size();
+        int last = path.length();
         for (Direction direction : directions) {
             if (direction == null) {
                 continue;
@@ -62,7 +63,10 @@ public class PathfindingScript extends Script {
             newSteps.set(last, new Step(direction, pos));
             BlockPos newPos = pos.offset(direction);
             if (!visited.contains(newPos) && isPath(pos, world, player)) {
-                explore(newPos, newSteps, world, player);
+                explore(newPos, newSteps, world, player, new HashSet<>(visited));
+                if (this.path.length() != 0) {
+                    break;
+                }
             }
         }
     }
@@ -78,27 +82,44 @@ public class PathfindingScript extends Script {
                 start("sprint");
                 start = player.getBlockPos().down();
                 end = ControlledInputHandler.pathfindingTarget;
-                visited = new ArrayList<>();
-                steps = new ArrayList<>();
+                path = new Path();
                 // Generate steps
                 BlockPos pos = start.mutableCopy();
-                explore(pos, new ArrayList<>(), world, player);
-                if (steps.size() == 0) {
+                explore(pos, new Path(), world, player, new HashSet<>());
+                if (path.length() == 0) {
                     ControlledInit.LOGGER.info("No viable paths found for %s to %s".formatted(start, end));
                     return end(world, player, current);
                 }
-                ControlledInit.LOGGER.info(steps.toString());
+                ControlledInit.LOGGER.info(path.toString());
             }
-            Step step = steps.get(current);
+            Step step = path.get(current);
             yaw(step.direction.asRotation());
-            int proposed = steps.get(current).isComplete(player.getBlockPos().down()) ? current + 1 : current;
-            return proposed >= steps.size() ? end(world, player, current) : proposed;
+            int proposed = path.get(current).isComplete(player.getBlockPos().down()) ? current + 1 : current;
+            return proposed >= path.length() ? end(world, player, current) : proposed;
         };
     }
 
     @Override
     protected void prepareStop() {
         stop = true;
+    }
+
+    private static Path comparePaths(Path p1, Path p2) {
+        if (p1.length() == 0) return p2;
+        Comparator<Path> sizeComparator = Comparator.comparing(Path::length);
+        return Comparators.min(p1, p2, sizeComparator.thenComparing(PathfindingScript::countPathTurns));
+    }
+
+    private static int countPathTurns(Path path) {
+        int turns = 0;
+        Direction last = null;
+        for (Step step : path) {
+            if (step.direction != last) {
+                turns++;
+            }
+            last = step.direction;
+        }
+        return turns - 1;
     }
 
     private record Step(Direction direction, BlockPos start) {
@@ -110,9 +131,69 @@ public class PathfindingScript extends Script {
             return Math.abs(operativeEndComponent - operativeStartComponent) >= 0.8;
         }
 
+        public Step copy() {
+            return new Step(direction, start);
+        }
+
         @Override
         public String toString() {
-            return "%s -> %s".formatted(start, start.add(direction.getVector()));
+            return start.offset(direction).toString();
+        }
+    }
+
+    private static class Path implements Iterable<Step> {
+
+        private final List<Step> steps;
+
+        public Path() {
+            this.steps = new ArrayList<>();
+        }
+
+        public Path(Path other) {
+            this();
+            for (Step step : other.steps) {
+                this.steps.add(step.copy());
+            }
+        }
+
+        @Override
+        public String toString() {
+            return steps.toString();
+        }
+
+        public void add(Step step) {
+            steps.add(step);
+        }
+
+        public int length() {
+            return steps.size();
+        }
+
+        public void set(int index, Step step) {
+            steps.set(index, step);
+        }
+
+        public Step get(int index) {
+            return steps.get(index);
+        }
+
+        @NotNull
+        @Override
+        public Iterator<Step> iterator() {
+            return new Iterator<>() {
+                private int next = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return next < steps.size();
+                }
+
+                @Override
+                public Step next() {
+                    next++;
+                    return steps.get(next - 1);
+                }
+            };
         }
     }
 }
